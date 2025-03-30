@@ -1,0 +1,52 @@
+# Eclipse specific files
+.settings/
+.project
+.classpath
+
+# Compiled class files
+bin/
+target/
+build/
+out/
+
+# Maven specific files
+.mvn/
+!**/src/main/**/mvnw*
+!**/src/main/**/mvnw.cmd
+pom.xml
+target/
+
+# Gradle specific files
+.gradle/
+build/
+gradle-app.setting
+gradle.properties
+gradlew
+gradlew.bat
+
+# Eclipse & IntelliJ IDE settings
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Tomcat, Jetty, or other server-specific files
+**/webapps/
+**/work/
+**/temp/
+**/logs/
+**/wtpwebapps/
+
+# Dependency & Library Folders
+lib/
+
+# Generated files
+*.log
+*.cache
+*.class
+*.war
+*.ear
+
+# OS-specific files
+.DS_Store
+Thumbs.db
