@@ -1,0 +1,34 @@
+@charset "UTF-8";
+footer {
+    background: #3a0d0d;
+    color: white;
+    text-align: center;
+    height: auto;
+    width: 100%;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+    margin: auto;
+}
+
+.left {
+    display: flex;
+}
+.social-links a {
+    color: white;
+    margin-right: 10px;
+}
+.social-links i {
+    font-size: 40px;
+}
+hr {
+    border: 0.5px solid white;
+    margin: 20px 0;
+}
+.copyright {
+    font-size: 14px;
+}
