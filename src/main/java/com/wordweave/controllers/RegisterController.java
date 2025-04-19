@@ -59,7 +59,7 @@ public class RegisterController extends HttpServlet {
                 handleError(request, response, "Our server is under maintenance. Please try again later!");
                 System.out.println("Not AddedError");
             } else if (isAdded) {
-                handleSuccess(request, response, "Your account is successfully created!", "/WEB-INF/pages/client/login.jsp");
+                response.sendRedirect("/WordWeave/login");
                 return;
             } else {
             	System.out.println("Couldn't Register");

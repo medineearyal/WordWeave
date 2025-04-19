@@ -39,6 +39,9 @@
 					<i class="fas fa-heart favorite-icon favorite"></i>
 				</a>
 				
+				<a href="/WordWeave/admin/dashboard/" class="link">
+					Dashboard
+				</a>
 				
 				<div class="user-nav-profile">
 					<i class="fa-solid fa-user" style="margin-right: 8px;"></i><strong>${ username }</strong>
