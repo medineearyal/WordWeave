@@ -56,6 +56,7 @@ public class UserManagementController extends HttpServlet {
 			return;
 		}
 
+		request.setAttribute("role", userRole.getValue());
 		if (action == null) {
 			try {
 				List<UserModel> users = userService.getAllUsers();

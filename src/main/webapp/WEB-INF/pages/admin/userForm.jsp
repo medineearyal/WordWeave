@@ -39,19 +39,22 @@
             <i class="fas fa-lock"></i>
             <input type="password" id="password" name="password" value="${user.password}" placeholder="Password" required>
         </label>
-
-        <label for="role_id">
-            <i class="fas fa-user-shield"></i>
-            <select name="role_id" id="role_id" required>
-                <option value="" disabled selected>Select Role</option>
-                <c:forEach var="role" items="${roles}">
-                    <option value="${role.role_id}" 
-                        ${user.role_id == role.role_id ? 'selected' : ''}>
-                        ${role.name}
-                    </option>
-                </c:forEach>
-            </select>
-        </label>
+	
+		<c:if test="${not empty profile and not profile.equals('view')}">
+			<label for="role_id">
+	            <i class="fas fa-user-shield"></i>
+	            <select name="role_id" id="role_id" required>
+	                <option value="" disabled selected>Select Role</option>
+	                <c:forEach var="role" items="${roles}">
+	                    <option value="${role.role_id}" 
+	                        ${user.role_id == role.role_id ? 'selected' : ''}>
+	                        ${role.name}
+	                    </option>
+	                </c:forEach>
+	            </select>
+	        </label>
+		</c:if>
+        
 
         <button type="submit">${actionText} User</button>
     </form>

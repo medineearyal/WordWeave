@@ -66,16 +66,19 @@ public class BlogManagementController extends HttpServlet {
 			Boolean canDelete = false;
 			Boolean canView = false;
 			Boolean canApprove = false;
+			Boolean canCreate = false;
 			
 			
 			if (role.equals("user")) {
 				canEdit = true;
 				canView = true;
+				canCreate = true;
 				
 			}else if (role.equals("admin")) {
 				canEdit = true;
 				canView = true;
 				canDelete = true;
+				canCreate = true;
 			}else if (role.equals("moderator")) {
 				canView = true;
 				canApprove = true;
@@ -87,6 +90,7 @@ public class BlogManagementController extends HttpServlet {
 			request.setAttribute("canDelete", canDelete);
 			request.setAttribute("canView", canView);
 			request.setAttribute("canApprove", canApprove);
+			request.setAttribute("canCreate", canCreate);
 		}
 		
 

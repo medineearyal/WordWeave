@@ -39,6 +39,7 @@ public class CategoryManagementController extends HttpServlet {
 			response.sendRedirect("/WordWeave/login");
 			return;
 		}
+		request.setAttribute("role", userRole.getValue());
 
         String action = request.getParameter("action");
 

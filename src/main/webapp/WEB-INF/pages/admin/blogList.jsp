@@ -27,8 +27,8 @@
 				<th>Author Name</th>
 				<th>Publish Date</th>
 				<th>Last Updated</th>
-				<th>Trending</th>
 				<c:if test="${canApprove}">
+					<th>Trending</th>
 					<th>Is Approved</th>
 				</c:if>
 				<th>Actions</th>
@@ -43,16 +43,17 @@
 					<td>${blog.authorName}</td>
 					<td>${blog.publishDate}</td>
 					<td>${blog.updatedAt}</td>
-					<td>
-						<a
-							href="/WordWeave/admin/blogs/?action=toggle-trending&id=${blog.blogId}">
-							<button
-								style="background-color: ${blog.isTrending ? '#4CAF50' : '#f44336'}; color: white; padding: 5px 10px; border-radius: 5px; width: 100%;">
-								${blog.isTrending ? 'Remove from Trending' : 'Add to Trending'}
-							</button>
-						</a>
-					</td>
 					<c:if test="${canApprove}">
+						<td>
+							<a
+								href="/WordWeave/admin/blogs/?action=toggle-trending&id=${blog.blogId}">
+								<button
+									style="background-color: ${blog.isTrending ? '#4CAF50' : '#f44336'}; color: white; padding: 5px 10px; border-radius: 5px; width: 100%;">
+									${blog.isTrending ? 'Remove from Trending' : 'Add to Trending'}
+								</button>
+							</a>
+						</td>
+					
 						<td>
 							<a href="/WordWeave/admin/blogs/?action=toggle-draft&id=${blog.blogId}" style="width=100%;">
 								<button
