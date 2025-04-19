@@ -1,8 +1,8 @@
 package com.wordweave.models;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
-import java.sql.Date;
 
 public class BlogModel {
 	private int blogId;
@@ -12,9 +12,38 @@ public class BlogModel {
 	private Timestamp updatedAt;
 	private int authorId;
 	private Date publishDate;
+	private Boolean isTrending;
+	private Boolean isDraft;
+	private int views;
+
+	public Boolean getIsDraft() {
+		return isDraft;
+	}
+
+	public void setIsDraft(Boolean isDraft) {
+		this.isDraft = isDraft;
+	}
 
 	private List<CategoryModel> categories;
 	private String authorName;
+	private String authorBio;
+	private String authorImage;
+
+	public String getAuthorImage() {
+		return authorImage;
+	}
+
+	public void setAuthorImage(String authorImage) {
+		this.authorImage = authorImage;
+	}
+
+	public String getAuthorBio() {
+		return authorBio;
+	}
+
+	public void setAuthorBio(String authorBio) {
+		this.authorBio = authorBio;
+	}
 
 	public String getAuthorName() {
 		return authorName;
@@ -110,5 +139,21 @@ public class BlogModel {
 
 	public void setPublishDate(Date publishDate) {
 		this.publishDate = publishDate;
+	}
+
+	public Boolean getIsTrending() {
+		return isTrending;
+	}
+
+	public void setIsTrending(Boolean isTrending) {
+		this.isTrending = isTrending;
+	}
+
+	public int getViews() {
+		return views;
+	}
+
+	public void setViews(int views) {
+		this.views = views;
 	}
 }

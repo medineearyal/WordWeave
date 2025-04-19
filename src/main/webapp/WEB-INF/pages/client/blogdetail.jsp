@@ -1,70 +1,62 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ include file="partials/header.jsp" %>
-        <section>
-            <h1> Spring Fest Begins in Switzerland</h1>
-            <div class="section-container">
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-                <div class="blog">
-                    <div class="main-content">
-                        
-                        <div class="main-article">
-                            <img src="./Images/Landscape.jpg" class="main-image">
-                            <h3>Spring Fest Begins in Switzerland</h3>
-                            <h6>20th March 2025-margret FF</h6>
-                            <p class="text"> Spring has arrived in Switzerland, painting the landscapes with vibrant tulips and fresh
-                                blossoms. As the Spring Fest kicks off, locals and tourists alike gather to celebrate the
-                                season of renewal.
-                                
-                                Writer Margret FF describes the scene as breathtaking-fields of colorful tulips swaying
-                                in the Alpine breeze, charming markets filled with handmade crafts, and the sweet aroma
-                                of seasonal treats filling the air. From flower parades to traditional folk music, the festival
-                                offers a perfect blend of nature and culture.
-                                <br>
-                                <br>
-                                <strong> Why Visit?</strong> 
-                                <ul>
-                                    <li>Tulip Extravaganza: Witness stunning displays of tulips in full bloom.</li>
-                                    <li>Local Delights: Taste Swiss spring specialties like fresh honey and alpine cheeses.</li>
-                                    <li>Cultural Events: Eniov live music. dance performances. and artisan</li>
-                                </ul>
-                            </p>
-                        </div>
-                        <div class="author">
-                            <img src="./Images/Person.png" class="name">
-                            <div class="author-description">
-                                <div class="author-name">
-                                    <h2> Medinee Aryal</h2>
-                                </div>
-                                <div class="author-name">
-                                    <h4>Author</h4>
-                                </div>
-                                <div class="author-name">
-                                    <h6>An enthusiastic author who writes content on general topics and themes. </h6>
-                                </div>
-                                
-                            </div>
-                        </div>
-                    </div>
+<%@ include file="partials/header.jsp"%>
+<section>
+	<h1 class="h1">${blog.title}</h1>
+	<div class="section-container" style="padding: 0;">
+		<div class="blog">
+			<div style="width: 100%;">
+				<div class="main-article">
+					<img src="${pageContext.request.contextPath}${blog.image}"
+						class="main-image">
+					<h3 class="text-left">${blog.title}</h3>
+					<h6 class="text-left">${blog.publishDate}-${blog.authorName} Views: ${blog.views}</h6>
+					<p class="text" style="text-align: justify;">${blog.content}</p>
+				</div>
+				<div class="author">
+					<img src="${pageContext.request.contextPath}${blog.authorImage}"
+						class="author-image">
+					<div class="author-description">
+						<div class="author-name">
+							<h2>${blog.authorName}</h2>
+						</div>
+						<div class="author-name">
+							<h4 style="color: var(--black-50);">Author</h4>
+						</div>
+						<div class="author-name">
+							<h6>${blog.authorBio}</h6>
+						</div>
 
-                    <div class="side-content">
-                        <h1>Similar Reads</h1>
-                        <div class="article">
-                            <img src="./Images/Hero.jpg" class="aticle-image">
-                            <h3>Shraddha Kapoor AI?</h3>
-                            <h6>13 March, 2025 Himal Rana </h6>                                
-                        </div>
-                        <div class="article">
-                            <img src="./Images/Locket.jpg" class="article-image">
-                            <h3>Locket From Sweet Peeps</h3>
-                            <h6>1 March, 2025 </h6>
-                        </div> 
-                                
-                    </div>
-                </div>
+					</div>
+				</div>
+			</div>
 
-                
-                
-            </div>
-        </section>
-<%@ include file="partials/footer.jsp" %>
+			<div class="side-content">
+				<h2 class="h2 text-left">
+					Similar Reads
+					</h1>
+					<div style="display: flex; gap: 1rem; flex-direction: column;">
+						<c:forEach var="similarBlog" items="${similarBlogs}">
+							<c:if test="${blog.blogId != similarBlog.blogId}">
+								<div class="clickableCard article"
+									data-id="${similarBlog.blogId}">
+									<img
+										src="${pageContext.request.contextPath}${similarBlog.image}"
+										class="article-image">
+									<h3 class="text-left" style="width: 100%;">${similarBlog.title}</h3>
+									<h6 class="text-left" style="width: 100%;">${similarBlog.publishDate}
+										${similarBlog.authorName}</h6>
+								</div>
+							</c:if>
+						</c:forEach>
+					</div>
+			</div>
+		</div>
+
+
+
+	</div>
+</section>
+<%@ include file="partials/footer.jsp"%>

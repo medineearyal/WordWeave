@@ -22,7 +22,7 @@ public class ValidationUtil {
     public static boolean isValidGender(String value) {
         return value != null && (value.equalsIgnoreCase("male") || value.equalsIgnoreCase("female"));
     }
-    
+
     public static boolean isValidEmail(String email) {
         String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
         return email != null && Pattern.matches(emailRegex, email);
@@ -44,7 +44,7 @@ public class ValidationUtil {
         String fileName = imagePart.getSubmittedFileName().toLowerCase();
         return fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png") || fileName.endsWith(".gif");
     }
-    
+
     public static boolean doPasswordsMatch(String password, String retypePassword) {
         return password != null && password.equals(retypePassword);
     }

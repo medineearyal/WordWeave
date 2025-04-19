@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.wordweave.config.DbConfig;
+import com.wordweave.models.BlogModel;
 import com.wordweave.models.UserModel;
 import com.wordweave.utils.PasswordUtil;
 
@@ -143,6 +144,7 @@ public class UserService {
 				user.setUsername(rs.getString("username"));
 				user.setRole_id(rs.getInt("role_id"));
 				user.setProfile_picture(rs.getString("profile_picture"));
+				user.setBio(rs.getString("bio"));
 			}
 
 		} catch (SQLException e) {
@@ -192,4 +194,88 @@ public class UserService {
 
 	    return updated;
 	}
+	
+	public UserModel getUserByUsername(String username) {
+		String sql = "SELECT * FROM user WHERE username = ?";
+		
+		try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
+	        stmt.setString(1, username);
+
+	        ResultSet rs = stmt.executeQuery();
+	        UserModel user = new UserModel();
+	        if (rs.next()) {
+				user = new UserModel();
+				user.setUser_id(rs.getInt("user_id"));
+				user.setFullname(rs.getString("fullname"));
+				user.setEmail(rs.getString("email"));
+				user.setUsername(rs.getString("username"));
+				user.setRole_id(rs.getInt("role_id"));
+				user.setProfile_picture(rs.getString("profile_picture"));
+				user.setBio(rs.getString("bio"));
+				user.setCreatedAt(rs.getDate("created_at"));
+			}
+	        return user;
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	}
+	
+	public List<UserModel> getMostRecentUsers(int limit) {
+	    List<UserModel> recentUsers = new ArrayList<>();
+	    
+	    // SQL query to select users ordered by created_at in descending order, with a limit on the number of results
+	    String query = "SELECT * FROM user ORDER BY created_at DESC LIMIT ?";
+	    
+	    try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
+	        stmt.setInt(1, limit);  // Set the limit parameter for the query
+	        
+	        ResultSet rs = stmt.executeQuery();
+	        
+	        // Iterate over the result set and map the rows to UserModel objects
+	        while (rs.next()) {
+	            UserModel user = new UserModel();
+	            user.setUser_id(rs.getInt("user_id"));
+	            user.setUsername(rs.getString("username"));
+	            user.setPassword(rs.getString("password"));
+	            user.setFullname(rs.getString("fullname"));
+	            user.setEmail(rs.getString("email"));
+	            user.setCreatedAt(rs.getDate("created_at"));  // Assuming created_at is a timestamp
+	            // Set other properties as necessary
+
+	            recentUsers.add(user);  // Add the user to the list
+	        }
+	        
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return recentUsers;  // Return the list of most recent users
+	}
+	
+	public int getApprovedUsersCountByRole(String roleName, Boolean isApproved) {
+	    int approvedUsersCount = 0;
+
+	    // SQL query to count users with the specified role and are approved
+	    String query = "SELECT COUNT(*) FROM user u " +
+	                   "JOIN roles r ON u.role_id = r.role_id " +
+	                   "WHERE r.name = ? AND u.is_approved = ?";  // Filter by role_name and is_approved
+
+	    try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
+	        stmt.setString(1, roleName);  // Set the role_name parameter in the query
+	        stmt.setBoolean(2, isApproved);
+	        ResultSet rs = stmt.executeQuery();
+	        
+	        if (rs.next()) {
+	            approvedUsersCount = rs.getInt(1);  // Get the count of approved users with the given role
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return approvedUsersCount;
+	}
+
 }

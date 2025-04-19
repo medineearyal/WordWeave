@@ -1,5 +1,16 @@
 package com.wordweave.controllers;
 
+import java.io.IOException;
+
+import com.wordweave.models.RoleModel;
+import com.wordweave.models.UserModel;
+import com.wordweave.services.RoleService;
+import com.wordweave.services.UserService;
+import com.wordweave.utils.FormUtils;
+import com.wordweave.utils.ImageUtil;
+import com.wordweave.utils.PasswordUtil;
+import com.wordweave.utils.ValidationUtil;
+
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -7,17 +18,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-
-import com.wordweave.models.RoleModel;
-import com.wordweave.models.UserModel;
-import com.wordweave.services.RoleService;
-import com.wordweave.services.UserService;
-import com.wordweave.utils.ValidationUtil;
-import com.wordweave.utils.PasswordUtil;
-import com.wordweave.utils.FormUtils;
-import com.wordweave.utils.ImageUtil;
 
 /**
  * Servlet implementation class RegisterController
@@ -34,12 +34,14 @@ public class RegisterController extends HttpServlet {
         super();
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/pages/client/register.jsp");
         dispatcher.forward(request, response);
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             // Validate and extract user model
             String validationMessage = validateRegistrationForm(request);
@@ -58,6 +60,7 @@ public class RegisterController extends HttpServlet {
                 System.out.println("Not AddedError");
             } else if (isAdded) {
                 handleSuccess(request, response, "Your account is successfully created!", "/WEB-INF/pages/client/login.jsp");
+                return;
             } else {
             	System.out.println("Couldn't Register");
                 handleError(request, response, "Could not register your account. Please try again later!");
@@ -76,34 +79,43 @@ public class RegisterController extends HttpServlet {
         	String username = FormUtils.getFormField(req, "username");
         	String password = FormUtils.getFormField(req, "password");
         	String cPassword = FormUtils.getFormField(req, "cPassword");
-        	
-        	if (ValidationUtil.isNullOrEmpty(fullname))
-                return "Fullname is required.";
 
-            if (ValidationUtil.isNullOrEmpty(username))
-                return "Username is required.";
+        	if (ValidationUtil.isNullOrEmpty(fullname)) {
+				return "Fullname is required.";
+			}
 
-            if (ValidationUtil.isNullOrEmpty(email))
-                return "Email is required.";
+            if (ValidationUtil.isNullOrEmpty(username)) {
+				return "Username is required.";
+			}
 
-            if (ValidationUtil.isNullOrEmpty(password))
-                return "Password is required.";
+            if (ValidationUtil.isNullOrEmpty(email)) {
+				return "Email is required.";
+			}
 
-            if (ValidationUtil.isNullOrEmpty(cPassword))
-                return "Please retype the password.";
+            if (ValidationUtil.isNullOrEmpty(password)) {
+				return "Password is required.";
+			}
+
+            if (ValidationUtil.isNullOrEmpty(cPassword)) {
+				return "Please retype the password.";
+			}
 
             // Validate fields
-            if (!ValidationUtil.isAlphanumericStartingWithLetter(username))
-                return "Username must start with a letter and contain only letters and numbers.";
+            if (!ValidationUtil.isAlphanumericStartingWithLetter(username)) {
+				return "Username must start with a letter and contain only letters and numbers.";
+			}
 
-            if (!ValidationUtil.isValidEmail(email))
-                return "Invalid email format.";
+            if (!ValidationUtil.isValidEmail(email)) {
+				return "Invalid email format.";
+			}
 
-            if (!ValidationUtil.isValidPassword(password))
-                return "Password must be at least 8 characters long, with 1 uppercase letter, 1 number, and 1 symbol.";
+            if (!ValidationUtil.isValidPassword(password)) {
+				return "Password must be at least 8 characters long, with 1 uppercase letter, 1 number, and 1 symbol.";
+			}
 
-            if (!ValidationUtil.doPasswordsMatch(password, cPassword))
-                return "Passwords do not match.";
+            if (!ValidationUtil.doPasswordsMatch(password, cPassword)) {
+				return "Passwords do not match.";
+			}
 		} catch (Exception e) {
 			// TODO: handle exception
 	        return null;
@@ -116,12 +128,12 @@ public class RegisterController extends HttpServlet {
         String email = FormUtils.getFormField(req, "email");
         String username = FormUtils.getFormField(req, "username");
         String password = FormUtils.getFormField(req, "password");
-        
+
         RoleModel userRole = roleService.getRole("user");
         System.out.println(userRole.getName());
         int roleId = userRole.getRole_id();
         System.out.println(roleId);
-        
+
         String profilePicture = null;
 
         // Encrypt the password before storing

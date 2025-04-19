@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
 
 public class ImageUtil {
-	
+
 	public boolean uploadImage(HttpServletRequest req, String field) throws IOException, ServletException {
 		Part image = req.getPart(field);
 		if (image == null || image.getSize() == 0) {

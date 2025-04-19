@@ -3,7 +3,7 @@ package com.wordweave.models;
 public class RoleModel {
     private int role_id;
     private String name;
-    
+
 	public int getRole_id() {
 		return role_id;
 	}
@@ -16,6 +16,6 @@ public class RoleModel {
 	public void setName(String name) {
 		this.name = name;
 	}
-    
-    
+
+
 }

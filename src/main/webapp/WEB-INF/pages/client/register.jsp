@@ -48,7 +48,7 @@
 			</div>
 		</form>
 		<div class="image">
-			<img src="./Images/Person.png" alt="image">
+			<img src="/WordWeave/images/Person.png" alt="image">
 		</div>
 	</div>
 </section>

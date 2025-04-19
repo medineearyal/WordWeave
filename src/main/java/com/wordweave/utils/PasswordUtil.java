@@ -27,7 +27,7 @@ public class PasswordUtil {
     private static final int SALT_LENGTH_BYTE = 16;
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
-   
+
     public static byte[] getRandomNonce(int numBytes) {
         byte[] nonce = new byte[numBytes];
         new SecureRandom().nextBytes(nonce);
@@ -63,27 +63,27 @@ public class PasswordUtil {
     	try {
 		    // 16 bytes salt
 		    byte[] salt = getRandomNonce(SALT_LENGTH_BYTE);
-		
+
 		    // GCM recommended 12 bytes iv?
 		    byte[] iv = getRandomNonce(IV_LENGTH_BYTE);
-		
+
 		    // secret key from password
 		    SecretKey aesKeyFromPassword = getAESKeyFromPassword(username.toCharArray(), salt);
-		
+
 		    Cipher cipher = Cipher.getInstance(ENCRYPT_ALGO);
-		
+
 		    // ASE-GCM needs GCMParameterSpec
 		    cipher.init(Cipher.ENCRYPT_MODE, aesKeyFromPassword, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
-		
+
 		    byte[] cipherText = cipher.doFinal(password.getBytes());
-		
+
 		    // prefix IV and Salt to cipher text
 		    byte[] cipherTextWithIvSalt = ByteBuffer.allocate(iv.length + salt.length + cipherText.length)
 		            .put(iv)
 		            .put(salt)
 		            .put(cipherText)
 		            .array();
-		
+
 		    // string representation, base64, send this string to other for decryption.
 		    return Base64.getEncoder().encodeToString(cipherTextWithIvSalt);
     	}catch(Exception ex) {
@@ -93,32 +93,32 @@ public class PasswordUtil {
 
     }
 
-    
+
     public static String decrypt(String encryptedPassword, String username) {
 		try {
 			byte[] decode = Base64.getDecoder().decode(encryptedPassword.getBytes(UTF_8));
-	
+
 			// get back the iv and salt from the cipher text
 			ByteBuffer bb = ByteBuffer.wrap(decode);
-	
+
 			byte[] iv = new byte[IV_LENGTH_BYTE];
 			bb.get(iv);
-	
+
 			byte[] salt = new byte[SALT_LENGTH_BYTE];
 			bb.get(salt);
-	
+
 			byte[] cipherText = new byte[bb.remaining()];
 			bb.get(cipherText);
-	
+
 			// get back the aes key from the same password and salt
 			SecretKey aesKeyFromPassword = PasswordUtil.getAESKeyFromPassword(username.toCharArray(), salt);
-	
+
 			Cipher cipher = Cipher.getInstance(ENCRYPT_ALGO);
-	
+
 			cipher.init(Cipher.DECRYPT_MODE, aesKeyFromPassword, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
-	
+
 			byte[] plainText = cipher.doFinal(cipherText);
-		
+
 			return new String(plainText, UTF_8);
 		}catch(Exception ex) {
 			ex.printStackTrace();

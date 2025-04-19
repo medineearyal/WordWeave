@@ -9,7 +9,7 @@
 
     <h2>${actionText} User</h2>
 
-    <form action="users" method="post" class="login-form">
+    <form method="post" class="login-form" enctype="multipart/form-data">
         <input type="hidden" name="action" value="${actionText == 'Edit' ? 'edit' : 'create'}">
         <c:if test="${actionText == 'Edit'}">
             <input type="hidden" name="id" value="${user.user_id}">
@@ -28,6 +28,11 @@
         <label for="email">
             <i class="fas fa-envelope"></i>
             <input type="email" id="email" name="email" value="${user.email}" placeholder="Email" required>
+        </label>
+        
+        <label for="email">
+            <i class="fas fa-envelope"></i>
+            <input type="file" id="profile_picture" name="profile_picture" value="${user.profile_picture}" placeholder="Profile Picture" required>
         </label>
 
         <label for="password">

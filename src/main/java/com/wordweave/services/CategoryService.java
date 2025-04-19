@@ -1,14 +1,14 @@
 package com.wordweave.services;
 
-import com.wordweave.config.DbConfig;
-import com.wordweave.models.CategoryModel;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.wordweave.config.DbConfig;
+import com.wordweave.models.CategoryModel;
 
 public class CategoryService {
 

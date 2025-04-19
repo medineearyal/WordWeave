@@ -1,26 +1,30 @@
 package com.wordweave.controllers.admin;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
-import com.wordweave.services.BlogService;
-import com.wordweave.services.CategoryService;
-import com.wordweave.services.UserService;
-import com.wordweave.utils.ImageUtil;
-import com.wordweave.config.DbConfig;
 import com.wordweave.models.BlogModel;
 import com.wordweave.models.CategoryModel;
+import com.wordweave.models.UserModel;
+import com.wordweave.services.BlogService;
+import com.wordweave.services.CategoryService;
+import com.wordweave.services.FavoriteBlogModel;
+import com.wordweave.services.UserService;
+import com.wordweave.utils.CookieUtil;
+import com.wordweave.utils.ImageUtil;
+import com.wordweave.utils.SessionUtil;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class BlogAdminController
@@ -29,7 +33,7 @@ import com.wordweave.models.CategoryModel;
 @WebServlet(asyncSupported = true, urlPatterns = { "/admin/blogs/" })
 public class BlogManagementController extends HttpServlet {
 	/**
-	 * 
+	 *
 	 */
 
 	private static final long serialVersionUID = 1L;
@@ -37,14 +41,58 @@ public class BlogManagementController extends HttpServlet {
 	private UserService userService = new UserService();
 	private CategoryService categoryService = new CategoryService();
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 		String action = request.getParameter("action");
+		
+		Cookie userRole = CookieUtil.getCookie(request, "role");
+		String username = (String) SessionUtil.getAttribute(request, "username");
+		
+		if (userRole == null && username != null) {
+			HttpSession session = request.getSession();
+		    session.removeAttribute("username");
+		    response.sendRedirect("/WordWeave/login");
+			return;
+		}
+		
+		if (username == null && userRole == null) {
+			response.sendRedirect("/WordWeave/login");
+			return;
+		}else {
+			String role = userRole.getValue();
+			Boolean canEdit = false;
+			Boolean canDelete = false;
+			Boolean canView = false;
+			Boolean canApprove = false;
+			
+			
+			if (role.equals("user")) {
+				canEdit = true;
+				canView = true;
+				
+			}else if (role.equals("admin")) {
+				canEdit = true;
+				canView = true;
+				canDelete = true;
+			}else if (role.equals("moderator")) {
+				canView = true;
+				canApprove = true;
+			}
+			
+	
+			request.setAttribute("role", role);
+			request.setAttribute("canEdit", canEdit);
+			request.setAttribute("canDelete", canDelete);
+			request.setAttribute("canView", canView);
+			request.setAttribute("canApprove", canApprove);
+		}
+		
 
 		if (action == null) {
 			try {
-				List<BlogModel> blogs = blogService.getAllBlogs();
+				List<BlogModel> blogs = blogService.getEveryBlogs();
 				List<CategoryModel> categories = categoryService.getAllCategories();
 				request.setAttribute("blogs", blogs);
 				request.setAttribute("categories", categories);
@@ -89,9 +137,128 @@ public class BlogManagementController extends HttpServlet {
 
 			request.setAttribute("actionText", actionText);
 			request.getRequestDispatcher("/WEB-INF/pages/admin/blogForm.jsp").forward(request, response);
+		}else if (action.equals("toggle-trending")) {
+			try {
+				int blogId = Integer.parseInt(request.getParameter("id"));
+				BlogModel blog = blogService.getBlogById(blogId);
+				Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
+				
+				if (blog.getIsTrending() == null || blog.getIsTrending() == false) {
+					blog.setIsTrending(true);
+				}else {
+					blog.setIsTrending(false);
+				}
+				
+				blog.setUpdatedAt(updatedAt);
+				if (blogService.updateBlogIsTrending(blog)) {
+					request.setAttribute("success", "Blog Successfully Updated");
+				}else {
+					request.setAttribute("error", "Blog Update Error");
+				}
+				
+				System.out.println(blog.getIsTrending());
+				
+				response.sendRedirect(request.getContextPath() + "/admin/blogs/");
+				return;
+				
+			} catch(Exception e) {
+				request.setAttribute("error", e);
+				request.getRequestDispatcher("/admin/blogs/").forward(request, response);
+				
+			}
+		}else if (action.equals("toggle-favorite")) {
+		    try {
+		        int blogId = Integer.parseInt(request.getParameter("blogId"));
+		        username = request.getParameter("username");
+		        
+		        // Retrieve user ID from username
+		        UserModel user = userService.getUserByUsername(username);
+		        
+		        // Check if the blog is already marked as a favorite
+		        boolean isFavorite = blogService.isBlogFavorite(user.getUser_id(), blogId);
+
+		        if (isFavorite) {
+		            boolean isRemoved = blogService.removeFromFavorite(user.getUser_id(), blogId);
+		            
+		            response.setContentType("application/json");
+		            response.setCharacterEncoding("UTF-8");
+
+		            String jsonResponse = "{";
+		            if (isRemoved) {
+		                jsonResponse += "\"status\": \"success\", \"message\": \"Successfully removed from favorites.\"";
+		            } else {
+		                jsonResponse += "\"status\": \"failure\", \"message\": \"Failed to remove from favorites.\"";
+		            }
+		            jsonResponse += "}";
+
+		            response.getWriter().write(jsonResponse);
+		        } else {
+		            FavoriteBlogModel favorite = new FavoriteBlogModel(user.getUser_id(), blogId);
+		            boolean isAdded = blogService.addToFavorite(favorite);
+
+		            // Respond with JSON response for adding
+		            response.setContentType("application/json");
+		            response.setCharacterEncoding("UTF-8");
+
+		            String jsonResponse = "{";
+		            if (isAdded) {
+		                jsonResponse += "\"status\": \"success\", \"message\": \"Successfully added to favorites.\"";
+		            } else {
+		                jsonResponse += "\"status\": \"failure\", \"message\": \"Failed to add to favorites.\"";
+		            }
+		            jsonResponse += "}";
+
+		            response.getWriter().write(jsonResponse);
+		        }
+
+		    } catch (Exception e) {
+		        // Handle error
+		        response.setContentType("application/json");
+		        response.setCharacterEncoding("UTF-8");
+
+		        String errorResponse = "{ \"status\": \"error\", \"message\": \"" + e.getMessage() + "\" }";
+		        response.getWriter().write(errorResponse);
+		    }
+		}else if (action.equals("toggle-draft")) {
+		    try {
+		        int blogId = Integer.parseInt(request.getParameter("id"));  // Get the blog ID from the request
+		        BlogModel blog = blogService.getBlogById(blogId);  // Retrieve the blog from the database
+		        Timestamp updatedAt = new Timestamp(System.currentTimeMillis());  // Get the current timestamp for the update
+		        
+		        // Toggle the draft status	        
+		        if (blog.getIsDraft() == null || blog.getIsDraft() == true) {
+		            blog.setIsDraft(false);  // Set to published
+		        } else {
+		            blog.setIsDraft(true);  // Set to draft
+		        }
+		        
+
+		        blog.setUpdatedAt(updatedAt);  // Update the `updatedAt` timestamp
+
+		        // Update the blog in the database
+		        boolean isUpdated = blogService.updateBlogStatus(blog);  // Assuming `updateBlog` updates the draft status too
+		        
+		        if (isUpdated) {
+					request.setAttribute("success", "Blog Successfully Updated");
+				}else {
+					request.setAttribute("error", "Blog Update Error");
+				}
+				
+				response.sendRedirect(request.getContextPath() + "/admin/blogs/");
+				return;
+
+		    } catch (Exception e) {
+		        // Handle error
+		        response.setContentType("application/json");
+		        response.setCharacterEncoding("UTF-8");
+
+		        String errorResponse = "{ \"status\": \"error\", \"message\": \"" + e.getMessage() + "\" }";
+		        response.getWriter().write(errorResponse);
+		    }
 		}
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -118,10 +285,10 @@ public class BlogManagementController extends HttpServlet {
 			BlogModel blog = new BlogModel(imagePath, content, title, authorId, publishDate);
 			int blogId = blogService.createBlog(blog);
 			blog.setBlogId(blogId);
-			
+
 			String[] selectedCategories = request.getParameterValues("categories");
 			System.out.println("Selected Categories: " + selectedCategories);
-			
+
 			if (selectedCategories != null) {
 		        for (String categoryId : selectedCategories) {
 		        	System.out.println("CategoryId: " + categoryId);
@@ -137,7 +304,7 @@ public class BlogManagementController extends HttpServlet {
 					}
 		        }
 		    }
-			
+
 			response.sendRedirect("/WordWeave/admin/blogs/");
 		} else if (action.equals("edit")) {
 			int blogId = Integer.parseInt(request.getParameter("id"));

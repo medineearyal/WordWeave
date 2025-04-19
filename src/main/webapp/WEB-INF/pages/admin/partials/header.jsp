@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+	
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,13 +18,22 @@
 <body>
 	<div class="sidebar">
 		<div class="logo-section">
-			<img src="../Images/logo.png" alt="Logo"> <span>WORDWEAVE</span>
+			<img src="/WordWeave/images/logo.png" alt="Logo"> <span>WORDWEAVE</span>
 		</div>
 		<ul class="menu">
 			<li><a href="/WordWeave/admin/dashboard/">Dashboard</a></li>
-			<li><a href="/WordWeave/admin/users">Users</a></li>
+			
+			<c:if test="${role != null and role.toLowerCase().equals('admin')}">
+				<li><a href="/WordWeave/admin/users/">Users</a></li>
+			</c:if>
+
 			<li><a href="/WordWeave/admin/blogs/">Blogs</a></li>
 			<li><a href="/WordWeave/admin/categories/">Categories</a></li>
+			
+			<c:if test="${role != null and role.toLowerCase().equals('moderator')}">
+				<li><a href="/WordWeave/admin/contacts/">Contacts</a></li>
+			</c:if>
+			
 		</ul>
 		<ul class="others">
 			<li><a href="/WordWeave/admin/accounts/">Accounts</a></li>

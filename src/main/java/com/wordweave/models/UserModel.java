@@ -1,5 +1,7 @@
 package com.wordweave.models;
 
+import java.sql.Date;
+
 public class UserModel {
 	private int user_id;
 	private String fullname;
@@ -8,15 +10,34 @@ public class UserModel {
 	private String password;
 	private int role_id;
 	private String profile_picture;
+	private String bio;
+	private Date createdAt;
+	private Boolean isApproved;
 	
+	public Boolean getIsApproved() {
+		return isApproved;
+	}
+
+	public void setIsApproved(Boolean isApproved) {
+		this.isApproved = isApproved;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
 	public UserModel() {
 	}
-	
+
 	public UserModel(String username, String password) {
 		this.username = username;
 		this.password = password;
 	}
-	
+
 	public UserModel(int user_id, String fullname, String email, String username, int role_id, String password, String profile_picture) {
 		super();
 		this.user_id = user_id;
@@ -83,7 +104,7 @@ public class UserModel {
 	}
 
 	public void setRole_id(int role_id) {
-		this.role_id = role_id; 
+		this.role_id = role_id;
 	}
 
 	public String getProfile_picture() {
@@ -92,5 +113,13 @@ public class UserModel {
 
 	public void setProfile_picture(String profile_picture) {
 		this.profile_picture = profile_picture;  // Setter for profile_picture
+	}
+
+	public String getBio() {
+		return bio;
+	}
+
+	public void setBio(String bio) {
+		this.bio = bio;
 	}
 }

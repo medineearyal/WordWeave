@@ -3,7 +3,7 @@ package com.wordweave.models;
 public class CategoryModel {
 	private int category_id;
 	private String name;
-	
+
 	public int getCategory_id() {
 		return category_id;
 	}

@@ -5,7 +5,7 @@
 			<div>
 				<div class="left">
 					<div class="logo">
-						<img src="./Images/logo.png" class="nav-logo">
+						<img src="/WordWeave/images/logo.png" class="nav-logo">
 					</div>
 					<div class="text">
 						<p>
@@ -36,5 +36,7 @@
 			<p class="copyright"style="text-align: center; margin: 0; padding: 1rem;" >Copyright&copy;WordWeave</p>
 		</div>
 	</footer>
+	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+	<script src="/WordWeave/js/main.js"></script>
 </body>
 </html>

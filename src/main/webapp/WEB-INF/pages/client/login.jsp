@@ -27,10 +27,9 @@
 				</div>
 			</div>
 		</form>
-
-	</div>
-	<div class="image">
-		<img src="./Images/Person.png" alt="image">
+<div class="image">
+				<img src="/WordWeave/images/Person.png" alt="image">
+			</div>
 	</div>
 </section>
 <%@ include file="partials/footer.jsp"%>

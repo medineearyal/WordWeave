@@ -1,47 +1,32 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ include file="partials/header.jsp" %>
-        <section>
-            <div class="section-container">
-                <h1>Favourites</h1>
-                
-                <div class="blog">
-                    <div class="main-content">
-                        <div class="content-1">
-                           <div class="main-article">
-                                <img src="./Images/Landscape.jpg" class="main-image">
-                                <h3>Spring Fest Begins in Switzerland 
-                                    <i class="fas fa-heart"></i>
-                                </h3>
-                                <h6>20th March,2025 -MargretFF</h6>
-                                <p  class="text"> Spring is blooming, tulips are great says writer Margret, Read More...</p>
-                            </div>
-                        </div>
-                        <div class="content-1">
-                            <div class="main-article">
-                                <img src="./Images/library.jpg" class="main-image">
-                                <h3>Libraries going Irrelevant recently
-                                    <i class="fas fa-heart"></i>
-                                </h3>
-                                <h6>19th March,2025 -Ram Thapa</h6>
-                                <p  class="text"> With growing social media use and technology, libraries are going instinct fears writer, Read More...</p>
+	pageEncoding="UTF-8"%>
+<%@ include file="partials/header.jsp"%>
+<section>
+	<div class="section-container">
+		<h1 class="h1">Favourites</h1>
 
-                            </div>
-                        </div>
-                        <div class="content-1">
-                            <div class="main-article">
-                                <img src="./Images/painting.jpg" class="main-image">
-                                <h3>Starry Night Painting is still on hype
-                                    <i class="fas fa-heart"></i>
-                                </h3>
-                                <h6>15th March,2025 -Rita Kuramri</h6>
-                                <p  class="text"> Painter van grough's painting till date is very beautiful and nice, Read More...</p>
-
-                            </div>
-
-                        </div>                        
-                    </div>
-   
-            </div>
-        </section>
-<%@ include file="partials/footer.jsp" %>
+		<div class="blog-grid-home" style="border: none;">
+			<!-- Loop through blogs -->
+			<c:forEach var="blog" items="${favoriteBlogs}">
+				<div class="main-article">
+					<img src="${pageContext.request.contextPath}${blog.image}"
+						class="main-image clickableCard" data-id="${blog.blogId}">
+					<h3 class="blog-title">${blog.title}
+						<c:if test="${fn:contains(favoriteBlogIds, blog.blogId)}">
+							<i class="fas fa-heart favorite-icon favorite"
+								data-blog-id="${blog.blogId}" data-user="${username}"></i>
+						</c:if>
+						<c:if test="${not fn:contains(favoriteBlogIds, blog.blogId)}">
+							<i class="fas fa-heart favorite-icon"
+								data-blog-id="${blog.blogId}" data-user="${username}"></i>
+						</c:if>
+					</h3>
+					<span class="blog-meta">${blog.publishDate} -
+						${blog.authorName}</span>
+					<p>${fn:substring(blog.content, 0, 100)}...</p>
+				</div>
+			</c:forEach>
+		</div>
+	</div>
+</section>
+<%@ include file="partials/footer.jsp"%>

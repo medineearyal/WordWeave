@@ -4,7 +4,7 @@
 <section style="display:block;">
 	<h1 style="text-align: center;">Contact Us</h1>
 
-	<div class="contact-main-container">
+	<div class="main-container">
 		<div class="message-form">
 			<label for="Fname"> <i class="fas fa-edit"></i> <input
 				type="text" id="Fname" placeholder="Full Name">
@@ -19,7 +19,7 @@
 		</div>
 		
 		<div class="image">
-			<img src="./Images/Person.png" alt="image">
+			<img src="/WordWeave/images/Person.png" alt="image">
 		</div>
 	</div>
 </section>

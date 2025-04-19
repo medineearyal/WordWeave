@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpSession;
  * Provides methods to set, get, remove session attributes and invalidate sessions.
  */
 public class SessionUtil {
-    
+
     /**
      * Sets an attribute in the session.
      *
