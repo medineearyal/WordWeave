@@ -136,8 +136,12 @@ public class UserManagementController extends HttpServlet {
         String email = FormUtils.getFormField(req, "email");
         String username = FormUtils.getFormField(req, "username");
         String password = FormUtils.getFormField(req, "password");
+        
         System.out.println(FormUtils.getFormField(req, "role_id"));
         System.out.println(req.getParameter("role_id"));
+        
+        System.out.println(req.getParameter("fullname"));
+        
         int roleId = Integer.parseInt(req.getParameter("role_id"));
        
 

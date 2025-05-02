@@ -127,7 +127,7 @@ public class BlogManagementController extends HttpServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			response.sendRedirect("/WordWeave/admin/blogs");
+			response.sendRedirect("/WordWeave/admin/blogs/");
 
 		} else if (action.equals("create")) {
 			String actionText = "Create";

@@ -147,7 +147,7 @@ public class RegisterController extends HttpServlet {
         // Return a new UserModel with the extracted data
         return new UserModel(fullname, email, username, password, roleId, profilePicture);
     }
-
+    @SuppressWarnings(value = { "" })
     private void handleSuccess(HttpServletRequest req, HttpServletResponse response, String message, String redirectPage)
             throws ServletException, IOException {
         req.setAttribute("success", message);
