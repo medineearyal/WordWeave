@@ -202,5 +202,4 @@
 		</c:if>
 	</div>
 </div>
-</body>
-</html>
+<%@ include file="partials/footer.jsp"%>

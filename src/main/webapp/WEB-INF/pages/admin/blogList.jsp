@@ -12,7 +12,7 @@
 		style="display: flex; justify-content: space-between; align-items: center;">
 		<h2>Blogs</h2>
 		<c:if test="${canCreate}">
-			<a href="/WordWeave/admin/blogs/?action=create"
+			<a href="/WordWeave/admin/blogs?action=create"
 				style="background-color: #4d1f26; color: white; padding: 10px 15px; border-radius: 8px; text-decoration: none; font-weight: bold;">
 				+ Create Blog </a>
 		</c:if>
@@ -46,7 +46,7 @@
 					<c:if test="${canApprove}">
 						<td>
 							<a
-								href="/WordWeave/admin/blogs/?action=toggle-trending&id=${blog.blogId}">
+								href="/WordWeave/admin/blogs?action=toggle-trending&id=${blog.blogId}">
 								<button
 									style="background-color: ${blog.isTrending ? '#4CAF50' : '#f44336'}; color: white; padding: 5px 10px; border-radius: 5px; width: 100%;">
 									${blog.isTrending ? 'Remove from Trending' : 'Add to Trending'}
@@ -55,7 +55,7 @@
 						</td>
 					
 						<td>
-							<a href="/WordWeave/admin/blogs/?action=toggle-draft&id=${blog.blogId}" style="width=100%;">
+							<a href="/WordWeave/admin/blogs?action=toggle-draft&id=${blog.blogId}" style="width=100%;">
 								<button
 									style="background-color: ${blog.isDraft ? '#4CAF50' : '#f44336'}; color: white; padding: 5px 10px; border-radius: 5px; width: 100%;">
 									${blog.isDraft ? 'Publish' : 'Add to Draft'}
@@ -67,7 +67,7 @@
 					<td>
 						<c:if test="${canEdit }">
 							<a
-								href="/WordWeave/admin/blogs/?action=edit&id=${blog.blogId}"
+								href="/WordWeave/admin/blogs?action=edit&id=${blog.blogId}"
 								style="margin-right: 10px;"> <i class="fas fa-edit"
 									style="color: #4d1f26;"></i>
 							</a> 
@@ -75,7 +75,7 @@
 						
 						
 						<c:if test="${canDelete }">
-							<a href="/WordWeave/admin/blogs/?action=delete&id=${blog.blogId}"
+							<a href="/WordWeave/admin/blogs?action=delete&id=${blog.blogId}"
 							onclick="return confirm('Are you sure you want to delete this blog?')">
 								<i class="fas fa-trash-alt" style="color: red;"></i>
 							</a>
@@ -87,5 +87,4 @@
 	</table>
 </div>
 
-</body>
-</html>
+<%@ include file="partials/footer.jsp"%>

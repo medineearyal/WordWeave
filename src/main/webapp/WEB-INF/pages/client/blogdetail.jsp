@@ -3,12 +3,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ include file="partials/header.jsp"%>
-<section>
+<section class="section-container">
 	<h1 class="h1">${blog.title}</h1>
-	<div class="section-container" style="padding: 0;">
+	<div class="" style="padding: 0;">
 		<div class="blog">
 			<div style="width: 100%;">
-				<div class="main-article">
+				<div class="detail-container">
 					<img src="${pageContext.request.contextPath}${blog.image}"
 						class="main-image">
 					<h3 class="text-left">${blog.title}</h3>

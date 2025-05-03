@@ -45,7 +45,6 @@ public class HomeController extends HttpServlet {
 		List<BlogModel> mostViewed;
 		
 		try {
-		    // Fetch all blogs and trending blogs
 		    blogs = blogService.getAllBlogs();
 		    trendingBlogs = blogService.getAllTrendingBlogs();
 		    mostViewed = blogService.getAllMostViewedBlogs();
@@ -53,35 +52,26 @@ public class HomeController extends HttpServlet {
 		    if (mostViewed.size() > 4) {
 		    	mostViewed = mostViewed.subList(0, 4);
 	        }
-		    
-		    // Set attributes for blogs and trending blogs
+		   
 		    request.setAttribute("blogs", blogs);
 		    request.setAttribute("trendingBlogs", trendingBlogs);
 		    request.setAttribute("mostViewedBlogs", mostViewed);
 
-		    // Get the session and retrieve the username
-		    String sessionUsername = (String) SessionUtil.getAttribute(request, "username");
+		    String sessionUsername = (String) request.getAttribute("username");
 
 		    if (sessionUsername != null) {
-		        // Fetch the user by username
 		        UserModel user = userService.getUserByUsername(sessionUsername);
 		        
 		        if (user != null) {
-		            // Get the user ID and fetch favorite blogs
 		            int userId = user.getUser_id();
 		            List<Integer> favoriteBlogIds = blogService.getFavoriteBlogIdsByUser(userId);
 		            request.setAttribute("favoriteBlogIds", favoriteBlogIds);
 		        } else {
-		            // Handle case where user is not found
 		            request.setAttribute("error", "User not found.");
 		        }
-		    } else {
-		        // Handle case where username is not in the session
-		        request.setAttribute("error", "User not logged in.");
 		    }
 
 		} catch (Exception e) {
-		    // Catch more general exceptions such as SQLException, ClassNotFoundException
 		    e.printStackTrace();
 		    request.setAttribute("error", "An error occurred while fetching the blogs.");
 		}

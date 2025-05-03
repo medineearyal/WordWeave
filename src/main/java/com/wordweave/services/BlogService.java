@@ -122,6 +122,40 @@ public class BlogService {
 
 		return blogs;
 	}
+	
+	public List<BlogModel> getEveryBlogs(String username) throws ClassNotFoundException {
+	    List<BlogModel> blogs = new ArrayList<>();
+	    String sql = "SELECT b.*, u.fullname AS author_name FROM blog b JOIN user u ON b.author_id = u.user_id WHERE u.username = ?;"; 
+
+	    try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
+	        stmt.setString(1, username);
+	        
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            while (rs.next()) {
+	                BlogModel blog = new BlogModel();
+	                blog.setBlogId(rs.getInt("blog_id"));
+	                blog.setImage(rs.getString("image"));
+	                blog.setContent(rs.getString("content"));
+	                blog.setTitle(rs.getString("title"));
+	                blog.setUpdatedAt(rs.getTimestamp("updated_at"));
+	                blog.setAuthorId(rs.getInt("author_id"));
+	                blog.setPublishDate(rs.getDate("publish_date"));
+	                blog.setCategories(getCategoriesForBlog(blog.getBlogId()));
+	                blog.setAuthorName(rs.getString("author_name"));
+	                blog.setIsTrending(rs.getBoolean("is_trending"));
+	                blog.setViews(rs.getInt("views"));
+	                blog.setIsDraft(rs.getBoolean("is_draft"));
+
+	                blogs.add(blog);
+	            }
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return blogs;
+	}
 
 	public List<BlogModel> getAllTrendingBlogs() {
 		List<BlogModel> blogs = new ArrayList<>();

@@ -1,6 +1,6 @@
 const swiper = new Swiper('.swiper', {
 	slidesPerView: 4,
-	spaceBetween: 8,
+	spaceBetween: 4,
 	grid: {
 		rows: 1,
 		fill: 'column',
@@ -57,4 +57,40 @@ document.addEventListener("DOMContentLoaded", function() {
 			}
 		});
 	});
+
+	const notifications = document.querySelectorAll('.notification');
+
+	notifications.forEach(notification => {
+		// Show the notification
+		notification.classList.add('show');
+
+		// Fade out after 5 seconds
+		setTimeout(() => {
+			notification.classList.remove('show');
+		}, 5000);  // 5 seconds
+	});
+
+	getCopyrightDate();
 });
+
+window.addEventListener("scroll", function() {
+	const header = document.querySelector("header");
+	if (window.scrollY > 0) {
+		header.classList.add("scrolled");
+	} else {
+		header.classList.remove("scrolled");
+	}
+});
+
+function getCopyrightDate() {
+	const copyrightSpan = document.querySelector(".copyright-date");
+	const currentYear = new Date().getFullYear();
+	if (copyrightSpan) {
+		copyrightSpan.innerHTML = currentYear;	
+	}
+}
+
+function clearSearchInput() {
+	const searchInput = document.getElementById("Search");
+	searchInput.value = "";
+}

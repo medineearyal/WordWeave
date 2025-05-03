@@ -26,24 +26,24 @@ body {
 }
 
 button {
-  align-self: center;
-  width: 50%;
-  background: #9c2d3d;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+	align-self: center;
+	width: 50%;
+	background: #9c2d3d;
+	color: white;
+	border: none;
+	padding: 12px;
+	border-radius: 8px;
+	font-size: 16px;
+	cursor: pointer;
+	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 input, textarea {
-  border: none;
-  outline: none;
-  background: transparent;
-  width: 100%;
-  font-size: 16px;
+	border: none;
+	outline: none;
+	background: transparent;
+	width: 100%;
+	font-size: 16px;
 }
 
 a {
@@ -279,35 +279,116 @@ textarea {
 	color: blue;
 	font-weight: bold;
 }
+
 select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
-    background-color: #fff;
-    color: #333;
-    appearance: none;
-    -webkit-appearance: none; 
-    -moz-appearance: none;
-    text-indent: 10px;
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	font-size: 16px;
+	background-color: #fff;
+	color: #333;
+	text-indent: 10px;
 }
 
 select:focus {
-    outline: none;
-    border-color: #4d1f26;
+	outline: none;
+	border-color: #4d1f26;
 }
 
 select::-ms-expand {
-    display: none;
+	display: none;
+}
+
+select::after {
+	content: '\f0d7';
+	font-family: 'FontAwesome';
+	position: absolute;
+	top: 14px;
+	right: 10px;
+	pointer-events: none;
 }
 
 
-select::after {
-    content: '\f0d7'; 
-    font-family: 'FontAwesome';
-    position: absolute;
-    top: 14px;
-    right: 10px;
-    pointer-events: none;
+/* Container for the message details */
+.view-contact-container {
+	background-color: white;
+	border-radius: 8px;
+	box-shadow: 2px 2px 8px rgba(156, 45, 61, 0.4);
+	padding: 20px;
+	margin: 20px auto;
+	transition: all 0.3s ease;
+}
+
+/* Text Styling */
+.view-contact-container div {
+	margin-bottom: 1.5rem;
+	font-size: 16px;
+	color: #555;
+}
+
+.view-contact-container h2 {
+	margin-bottom: 1rem;
+}
+
+.view-contact-container strong {
+	color: #333;
+	font-weight: bold;
+}
+
+.view-contact-container p {
+	background-color: #f9f9f9;
+	padding: 10px;
+	border-left: 4px solid #007bff;
+	color: #333;
+	border-radius: 4px;
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+/* Empty message styling */
+.view-contact-container p {
+	text-align: justify;
+	font-size: 18px;
+	color: #e74c3c;
+}
+
+.view-contact-container .message {
+	margin-top: 0.5rem;
+}
+
+.form-error {
+    color: #e74c3c;
+    font-size: 1rem;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.notification {
+    position: fixed;
+    width: 100%;	
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 30px;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    z-index: 99999999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s, visibility 0.5s;
+}
+
+.notification.success {
+    background-color: #4CAF50; /* Green */
+}
+
+.notification.error {
+    background-color: #f44336; /* Red */
+}
+
+.notification.show {
+    opacity: 1;
+    visibility: visible;
 }

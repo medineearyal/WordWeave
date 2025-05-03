@@ -21,21 +21,40 @@
 			<img src="/WordWeave/images/logo.png" alt="Logo"> <span>WORDWEAVE</span>
 		</div>
 		<ul class="menu">
-			<li><a href="/WordWeave/admin/dashboard/">Dashboard</a></li>
+			<li><a href="/WordWeave/admin/dashboard">Dashboard</a></li>
 			
 			<c:if test="${role != null and role.toLowerCase().equals('admin')}">
-				<li><a href="/WordWeave/admin/users/">Users</a></li>
+				<li><a href="/WordWeave/admin/users">Users</a></li>
 			</c:if>
 
-			<li><a href="/WordWeave/admin/blogs/">Blogs</a></li>
-			<li><a href="/WordWeave/admin/categories/">Categories</a></li>
+			<li><a href="/WordWeave/admin/blogs">Blogs</a></li>
+			<li><a href="/WordWeave/admin/categories">Categories</a></li>
 			
-			<c:if test="${role != null and role.toLowerCase().equals('moderator')}">
-				<li><a href="/WordWeave/admin/contacts/">Contacts</a></li>
+			<c:if test="${role != null and role.toLowerCase().equals('user')}">
+				<li><a href="/WordWeave/admin/contacts">Contacts</a></li>
 			</c:if>
 			
 		</ul>
 		<ul class="others">
-			<li><a href="/WordWeave/admin/accounts/">Accounts</a></li>
+			<li><a href="/WordWeave/admin/accounts">Accounts</a></li>
 		</ul>
+	</div>
+	<div class="message-status">
+		<%
+		String successMessage = (String) request.getAttribute("success");
+		String errorMessage = (String) request.getAttribute("error");
+		if (successMessage != null) {
+		%>
+		<div class="notification success">
+			<%=successMessage%>
+		</div>
+		<%
+		} else if (errorMessage != null) {
+		%>
+		<div class="notification error">
+			<%=errorMessage%>
+		</div>
+		<%
+		}
+		%>
 	</div>

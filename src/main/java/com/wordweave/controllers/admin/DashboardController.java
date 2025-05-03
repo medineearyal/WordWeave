@@ -23,7 +23,7 @@ import jakarta.servlet.http.HttpSession;
 /**
  * Servlet implementation class DashboardController
  */
-@WebServlet(asyncSupported = true, urlPatterns = { "/admin/dashboard/" })
+@WebServlet(asyncSupported = true, urlPatterns = { "/admin/dashboard" })
 public class DashboardController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private BlogService blogService = new BlogService();
@@ -43,21 +43,14 @@ public class DashboardController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		Cookie userRole = CookieUtil.getCookie(request, "role");
-		String username = (String) SessionUtil.getAttribute(request, "username");
-		
-		if (userRole == null && username != null) {
-			HttpSession session = request.getSession();
-		    session.removeAttribute("username");
-		    System.out.println("Username removed from session");
-		}
+		String userRole = (String) request.getAttribute("role");
+		String username = (String) request.getAttribute("username");
 		
 		if (username == null && userRole == null) {
 			response.sendRedirect("/WordWeave/login");
 			return;
 		}else {
-			String role = userRole.getValue();
-			System.out.println("Role Value: " + role);
+			String role = userRole;
 			
 			int totalPublishedBlogs = 0;
 			
@@ -104,8 +97,6 @@ public class DashboardController extends HttpServlet {
 			request.setAttribute("totalPublishedBlogs", totalPublishedBlogs);
 		}
 		
-		
-		System.out.println("User Role: " + userRole);
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/pages/admin/dashboard.jsp");
 		dispatcher.forward(request, response);
 	}

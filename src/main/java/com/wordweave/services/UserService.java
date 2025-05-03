@@ -34,7 +34,6 @@ public class UserService {
 	 */
 	public Boolean loginUser(UserModel userModel) {
 		if (isConnectionError) {
-			System.out.println("Connection Error!");
 			return null;
 		}
 
@@ -44,7 +43,6 @@ public class UserService {
 			ResultSet result = stmt.executeQuery();
 
 			if (result.next()) {
-				System.out.println(result);
 				return validatePassword(result, userModel);
 			}
 		} catch (SQLException e) {
@@ -125,6 +123,51 @@ public class UserService {
 
 		return userList;
 	}
+	
+	public List<UserModel> getAllUsers(String role) throws ClassNotFoundException {
+	    List<UserModel> userList = new ArrayList<>();
+
+	    String roleQuery = "SELECT role_id FROM roles WHERE name = ?";
+	    String userQuery = "SELECT user_id, fullname, email, username, role_id, profile_picture FROM user WHERE role_id = ?";
+
+	    try (Connection conn = DbConfig.getDbConnection();
+	         PreparedStatement roleStmt = conn.prepareStatement(roleQuery)) {
+
+	        // Step 1: Get the role_id from role name
+	        roleStmt.setString(1, role);
+	        try (ResultSet roleRs = roleStmt.executeQuery()) {
+	            if (roleRs.next()) {
+	                int roleId = roleRs.getInt("role_id");
+
+	                // Step 2: Use role_id to filter users
+	                try (PreparedStatement userStmt = conn.prepareStatement(userQuery)) {
+	                    userStmt.setInt(1, roleId);
+	                    try (ResultSet rs = userStmt.executeQuery()) {
+	                        while (rs.next()) {
+	                            UserModel user = new UserModel();
+	                            user.setUser_id(rs.getInt("user_id"));
+	                            user.setFullname(rs.getString("fullname"));
+	                            user.setEmail(rs.getString("email"));
+	                            user.setUsername(rs.getString("username"));
+	                            user.setRole_id(rs.getInt("role_id"));
+	                            user.setProfile_picture(rs.getString("profile_picture"));
+
+	                            userList.add(user);
+	                        }
+	                    }
+	                }
+
+	            } else {
+	                System.out.println("Role not found: " + role);
+	            }
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return userList;
+	}
 
 	public UserModel getUserById(int id) throws ClassNotFoundException {
 		UserModel user = null;
@@ -145,6 +188,7 @@ public class UserService {
 				user.setRole_id(rs.getInt("role_id"));
 				user.setProfile_picture(rs.getString("profile_picture"));
 				user.setBio(rs.getString("bio"));
+				user.setPassword(rs.getString("password"));
 			}
 
 		} catch (SQLException e) {
@@ -202,7 +246,7 @@ public class UserService {
 	        stmt.setString(1, username);
 
 	        ResultSet rs = stmt.executeQuery();
-	        UserModel user = new UserModel();
+	        UserModel user = null;
 	        if (rs.next()) {
 				user = new UserModel();
 				user.setUser_id(rs.getInt("user_id"));
@@ -225,15 +269,13 @@ public class UserService {
 	public List<UserModel> getMostRecentUsers(int limit) {
 	    List<UserModel> recentUsers = new ArrayList<>();
 	    
-	    // SQL query to select users ordered by created_at in descending order, with a limit on the number of results
 	    String query = "SELECT * FROM user ORDER BY created_at DESC LIMIT ?";
 	    
 	    try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
-	        stmt.setInt(1, limit);  // Set the limit parameter for the query
+	        stmt.setInt(1, limit); 
 	        
 	        ResultSet rs = stmt.executeQuery();
 	        
-	        // Iterate over the result set and map the rows to UserModel objects
 	        while (rs.next()) {
 	            UserModel user = new UserModel();
 	            user.setUser_id(rs.getInt("user_id"));
@@ -241,10 +283,9 @@ public class UserService {
 	            user.setPassword(rs.getString("password"));
 	            user.setFullname(rs.getString("fullname"));
 	            user.setEmail(rs.getString("email"));
-	            user.setCreatedAt(rs.getDate("created_at"));  // Assuming created_at is a timestamp
-	            // Set other properties as necessary
+	            user.setCreatedAt(rs.getDate("created_at")); 
 
-	            recentUsers.add(user);  // Add the user to the list
+	            recentUsers.add(user);
 	        }
 	        
 	    } catch (SQLException e) {

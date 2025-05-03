@@ -24,5 +24,4 @@
         <button type="submit">${actionText} Category</button>
     </form>
 </div>
-</body>
-</html>
+<%@ include file="partials/footer.jsp"%>

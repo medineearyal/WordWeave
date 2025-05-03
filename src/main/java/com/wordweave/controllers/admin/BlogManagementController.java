@@ -30,7 +30,7 @@ import jakarta.servlet.http.HttpSession;
  * Servlet implementation class BlogAdminController
  */
 @MultipartConfig
-@WebServlet(asyncSupported = true, urlPatterns = { "/admin/blogs/" })
+@WebServlet(asyncSupported = true, urlPatterns = { "/admin/blogs" })
 public class BlogManagementController extends HttpServlet {
 	/**
 	 *
@@ -47,27 +47,26 @@ public class BlogManagementController extends HttpServlet {
 
 		String action = request.getParameter("action");
 		
-		Cookie userRole = CookieUtil.getCookie(request, "role");
-		String username = (String) SessionUtil.getAttribute(request, "username");
+		String userRole = (String) request.getAttribute("role");
+		String username = (String) request.getAttribute("username");
 		
-		if (userRole == null && username != null) {
-			HttpSession session = request.getSession();
-		    session.removeAttribute("username");
-		    response.sendRedirect("/WordWeave/login");
-			return;
-		}
+		String role= "";
+	
 		
 		if (username == null && userRole == null) {
 			response.sendRedirect("/WordWeave/login");
 			return;
 		}else {
-			String role = userRole.getValue();
+			role = userRole;
 			Boolean canEdit = false;
 			Boolean canDelete = false;
 			Boolean canView = false;
 			Boolean canApprove = false;
 			Boolean canCreate = false;
 			
+			UserModel user = userService.getUserByUsername(username);
+			
+				
 			
 			if (role.equals("user")) {
 				canEdit = true;
@@ -86,6 +85,7 @@ public class BlogManagementController extends HttpServlet {
 			
 	
 			request.setAttribute("role", role);
+			request.setAttribute("user", user);
 			request.setAttribute("canEdit", canEdit);
 			request.setAttribute("canDelete", canDelete);
 			request.setAttribute("canView", canView);
@@ -96,7 +96,13 @@ public class BlogManagementController extends HttpServlet {
 
 		if (action == null) {
 			try {
-				List<BlogModel> blogs = blogService.getEveryBlogs();
+				List<BlogModel> blogs;
+				if (role.equals("user")) {
+					blogs = blogService.getEveryBlogs(username);
+				}else {
+					blogs = blogService.getEveryBlogs();
+				}
+				
 				List<CategoryModel> categories = categoryService.getAllCategories();
 				request.setAttribute("blogs", blogs);
 				request.setAttribute("categories", categories);

@@ -1,6 +1,8 @@
 package com.wordweave.controllers;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.wordweave.models.RoleModel;
 import com.wordweave.models.UserModel;
@@ -51,46 +53,66 @@ public class LoginController extends HttpServlet {
 	 */
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		String username = req.getParameter("username");
-		String password = req.getParameter("password");
+	    Map<String, String> errors = validateLoginForm(req);
 
-		UserModel userModel = new UserModel(username, password);
-		Boolean loginStatus = userService.loginUser(userModel);
+	    if (!errors.isEmpty()) {
+	        handleLoginFailure(req, resp, errors);
+	        return;
+	    }
 
-		if (loginStatus != null && loginStatus) {
-			SessionUtil.setAttribute(req, "username", username);
-			UserModel user = userService.getUserByUsername(username);
-			RoleModel userRole = roleService.getUserRole(user.getUser_id());
+	    String username = req.getParameter("username");
+	    String password = req.getParameter("password");
 
-			if (userRole.getName().equals("admin")) {
-				CookieUtil.addCookie(resp, "role", "admin", 5 * 30);
+	    UserModel userModel = new UserModel(username, password);
+	    Boolean loginStatus = userService.loginUser(userModel);
 
-				resp.sendRedirect(req.getContextPath() + "/admin/dashboard/");
-			}else if (userRole.getName().equals("moderator")) {
-				CookieUtil.addCookie(resp, "role", "moderator", 5 * 30);
+	    if (loginStatus != null && loginStatus) {
+	        SessionUtil.setAttribute(req, "username", username);
+	        UserModel user = userService.getUserByUsername(username);
+	        RoleModel userRole = roleService.getUserRole(user.getUser_id());
 
-				resp.sendRedirect(req.getContextPath() + "/admin/dashboard/");
-			}else {
-				CookieUtil.addCookie(resp, "role", "user", 5 * 30);
-				resp.sendRedirect(req.getContextPath() + "/home");
-			}
-		} else {
-			handleLoginFailure(req, resp, loginStatus);
-		}
+	        String role = userRole.getName();
+	        SessionUtil.setAttribute(req, "role", role);
+	        
+	        if (role.equals("admin") || role.equals("moderator")) {
+	            resp.sendRedirect(req.getContextPath() + "/admin/dashboard");
+	        } else {
+	            resp.sendRedirect(req.getContextPath() + "/home");
+	        }
+	    } else {
+	        errors.put("error", loginStatus == null
+	            ? "Our server is under maintenance. Please try again later!"
+	            : "User credential mismatch. Please try again!");
+	        handleLoginFailure(req, resp, errors);
+	    }
 	}
 
-	private void handleLoginFailure(HttpServletRequest req, HttpServletResponse resp, Boolean loginStatus)
-			throws ServletException, IOException {
-		String errorMessage;
-		if (loginStatus == null) {
-			errorMessage = "Our server is under maintenance. Please try again later!";
-		} else {
-			errorMessage = "User credential mismatch. Please try again!";
-		}
-		req.setAttribute("error", errorMessage);
-		System.out.println(errorMessage);
-		req.getRequestDispatcher("/WEB-INF/pages/login.jsp").forward(req, resp);
+	private Map<String, String> validateLoginForm(HttpServletRequest req) {
+	    Map<String, String> errors = new HashMap<>();
+
+	    String username = req.getParameter("username");
+	    String password = req.getParameter("password");
+
+	    if (username == null || username.trim().isEmpty()) {
+	        errors.put("error_username", "Username is required.");
+	    }
+
+	    if (password == null || password.trim().isEmpty()) {
+	        errors.put("error_password", "Password is required.");
+	    }
+
+	    return errors;
+	}
+
+	private void handleLoginFailure(HttpServletRequest req, HttpServletResponse resp, Map<String, String> errors)
+	        throws ServletException, IOException {
+
+	    for (Map.Entry<String, String> entry : errors.entrySet()) {
+	        req.setAttribute(entry.getKey(), entry.getValue());
+	    }
+
+	    req.setAttribute("username", req.getParameter("username"));
+	    req.getRequestDispatcher("/WEB-INF/pages/client/login.jsp").forward(req, resp);
 	}
 
 }

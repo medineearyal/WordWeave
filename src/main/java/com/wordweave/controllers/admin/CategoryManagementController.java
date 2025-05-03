@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebServlet(asyncSupported = true, urlPatterns = { "/admin/categories/" })
+@WebServlet(asyncSupported = true, urlPatterns = { "/admin/categories" })
 public class CategoryManagementController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -26,20 +26,13 @@ public class CategoryManagementController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     	
-		Cookie userRole = CookieUtil.getCookie(request, "role");
-		String username = (String) SessionUtil.getAttribute(request, "username");
-		
-		if (userRole == null && username != null) {
-			HttpSession session = request.getSession();
-		    session.removeAttribute("username");
-		    System.out.println("Username removed from session");
-		}
+		String userRole = (String) request.getAttribute("role");
+		String username = (String) request.getAttribute("username");
 		
 		if (username == null && userRole == null) {
 			response.sendRedirect("/WordWeave/login");
 			return;
 		}
-		request.setAttribute("role", userRole.getValue());
 
         String action = request.getParameter("action");
 

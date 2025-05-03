@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <%@ include file="partials/header.jsp"%>
 
@@ -8,9 +9,6 @@
 
 	<div style="display: flex; justify-content: space-between; align-items: center;">
 		<h2>Users</h2>
-		<a href="/WordWeave/admin/contacts/?action=create"
-			style="background-color: #4d1f26; color: white; padding: 10px 15px; border-radius: 8px; text-decoration: none; font-weight: bold;">
-			+ Create Contact </a>
 	</div>
 
 	<table>
@@ -19,7 +17,8 @@
                 <th>Sender Name</th>
                 <th>Sender Email</th>
                 <th>Message Text</th>
-                <th>Actions</th>
+                <th>Sent Date</th>
+                <th></th>
             </tr>
 		</thead>
 		<tbody>
@@ -27,16 +26,12 @@
                 <tr>
                     <td>${contact.senderName}</td>
                     <td>${contact.senderEmail}</td>
-                    <td>${contact.messageText}</td>
-                    <td>
-                        <a href="/WordWeave/admin/contacts/?action=edit&id=${contact.messageId}">Edit</a> |
-                        <a href="/WordWeave/admin/contacts/?action=delete&id=${contact.messageId}" onclick="return confirm('Are you sure?');">Delete</a>
-                    </td>
+                    <td>${fn:substring(contact.messageText, 0, 50)}...</td>
+                    <td>${contact.messageDate }</td>
+                    <td><a href="/WordWeave/admin/contacts/?action=view&id=${contact.messageId}"><i class="fa-solid fa-eye"></i></a></td>
                 </tr>
             </c:forEach>
 		</tbody>
 	</table>
-
 </div>
-</body>
-</html>
+<%@ include file="partials/footer.jsp"%>

@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpSession;
 /**
  * Servlet implementation class AccountsAdminController
  */
-@WebServlet(asyncSupported = true, urlPatterns = { "/admin/accounts/" })
+@WebServlet(asyncSupported = true, urlPatterns = { "/admin/accounts" })
 public class AccountsAdminController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	UserService userService = new UserService();
@@ -38,14 +38,8 @@ public class AccountsAdminController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		Cookie userRole = CookieUtil.getCookie(request, "role");
-		String username = (String) SessionUtil.getAttribute(request, "username");
-		
-		if (userRole == null && username != null) {
-			HttpSession session = request.getSession();
-		    session.removeAttribute("username");
-		    System.out.println("Username removed from session");
-		}
+		String userRole = (String) request.getAttribute("role");
+		String username = (String) request.getAttribute("username");
 		
 		if (username == null && userRole == null) {
 			response.sendRedirect("/WordWeave/login");
@@ -54,7 +48,7 @@ public class AccountsAdminController extends HttpServlet {
 		
 		UserModel user = userService.getUserByUsername(username);
 
-		request.setAttribute("role", userRole.getValue());
+		request.setAttribute("role", userRole);
 		request.setAttribute("user", user);
 		request.setAttribute("actionText", user.getFullname());
 		request.setAttribute("profile", "view");

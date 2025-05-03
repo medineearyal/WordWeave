@@ -51,25 +51,19 @@ public class BlogController extends HttpServlet {
 			request.setAttribute("blogs", blogs);
 			request.setAttribute("mostViewedBlogs", mostViewed);
 			
-			String sessionUsername = (String) SessionUtil.getAttribute(request, "username");
+			String sessionUsername = (String) request.getAttribute("username");
 
 		    if (sessionUsername != null) {
-		        // Fetch the user by username
 		        UserModel user = userService.getUserByUsername(sessionUsername);
 		        
 		        if (user != null) {
-		            // Get the user ID and fetch favorite blogs
 		            int userId = user.getUser_id();
 		            List<Integer> favoriteBlogIds = blogService.getFavoriteBlogIdsByUser(userId);
 		            System.out.println(favoriteBlogIds);
 		            request.setAttribute("favoriteBlogIds", favoriteBlogIds);
 		        } else {
-		            // Handle case where user is not found
 		            request.setAttribute("error", "User not found.");
 		        }
-		    } else {
-		        // Handle case where username is not in the session
-		        request.setAttribute("error", "User not logged in.");
 		    }
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block

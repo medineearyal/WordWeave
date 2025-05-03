@@ -40,27 +40,28 @@
 		<div>
 			<h2 class="h2 text-left">Recents</h2>
 
-			<div style="display: flex;">
+			<div class="blogs-wrapper">
 				<div class="blog-grid-home">
 					<!-- Loop through blogs -->
 					<c:forEach var="blog" items="${blogs}">
 						<div class="main-article">
 							<img src="${pageContext.request.contextPath}${blog.image}"
 								class="main-image clickableCard" data-id="${blog.blogId}">
-							<h3 class="blog-title">${blog.title}
-								<!-- Check if blog is in the favorite list -->
-								<c:if test="${fn:contains(favoriteBlogIds, blog.blogId)}">
-									<i class="fas fa-heart favorite-icon favorite"
-										data-blog-id="${blog.blogId}" data-user="${username}"></i>
-								</c:if>
-								<c:if test="${not fn:contains(favoriteBlogIds, blog.blogId)}">
-									<i class="fas fa-heart favorite-icon"
-										data-blog-id="${blog.blogId}" data-user="${username}"></i>
-								</c:if>
-							</h3>
-							<span class="blog-meta">${blog.publishDate} -
-								${blog.authorName}</span>
-							<p>${fn:substring(blog.content, 0, 100)}...</p>
+							<div class="card-content">
+								<h3 class="blog-title">${blog.title}
+									<c:if test="${fn:contains(favoriteBlogIds, blog.blogId)}">
+										<i class="fas fa-heart fa-l favorite-icon favorite"
+											data-blog-id="${blog.blogId}" data-user="${username}"></i>
+									</c:if>
+									<c:if test="${not fn:contains(favoriteBlogIds, blog.blogId)}">
+										<i class="fas fa-heart fa-l favorite-icon"
+											data-blog-id="${blog.blogId}" data-user="${username}"></i>
+									</c:if>
+								</h3>
+								<span class="blog-meta">${blog.publishDate} -
+									${blog.authorName}</span>
+								<p>${fn:substring(blog.content, 0, 100)}...</p>
+							</div>
 						</div>
 					</c:forEach>
 				</div>

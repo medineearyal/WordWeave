@@ -1,6 +1,8 @@
 package com.wordweave.controllers;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.wordweave.models.RoleModel;
 import com.wordweave.models.UserModel;
@@ -36,92 +38,92 @@ public class RegisterController extends HttpServlet {
 
     @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	String username = (String) request.getAttribute("username");
+
+    	if (username != null) {
+    		response.sendRedirect(request.getContextPath() + "/");
+    		return;
+    	}
+    	
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/pages/client/register.jsp");
         dispatcher.forward(request, response);
     }
 
     @Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            // Validate and extract user model
-            String validationMessage = validateRegistrationForm(request);
-            if (validationMessage != null) {
-            	System.out.println("Validation Failed: " + validationMessage);
-                handleError(request, response, validationMessage);
+            Map<String, String> errors = validateRegistrationForm(request);
+            if (!errors.isEmpty()) {
+                handleError(request, response, errors);
                 return;
             }
 
             UserModel userModel = extractUserModel(request);
-
             Boolean isAdded = userService.registerUser(userModel);
 
             if (isAdded == null) {
-                handleError(request, response, "Our server is under maintenance. Please try again later!");
-                System.out.println("Not AddedError");
+                errors.put("error", "Our server is under maintenance. Please try again later!");
+                handleError(request, response, errors);
             } else if (isAdded) {
                 response.sendRedirect("/WordWeave/login");
-                return;
             } else {
-            	System.out.println("Couldn't Register");
-                handleError(request, response, "Could not register your account. Please try again later!");
+                errors.put("error", "Could not register your account. Please try again later!");
+                handleError(request, response, errors);
             }
         } catch (Exception e) {
-            handleError(request, response, "An unexpected error occurred. Please try again later!");
-            System.out.println("Random Error");
-            e.printStackTrace();
+            Map<String, String> errors = new HashMap<>();
+            errors.put("error", "An unexpected error occurred. Please try again later!");
+            handleError(request, response, errors);
         }
     }
 
-    private String validateRegistrationForm(HttpServletRequest req) {
-    	try {
-    		String fullname = FormUtils.getFormField(req, "fullname");
-        	String email = FormUtils.getFormField(req, "email");
-        	String username = FormUtils.getFormField(req, "username");
-        	String password = FormUtils.getFormField(req, "password");
-        	String cPassword = FormUtils.getFormField(req, "cPassword");
+    private Map<String, String> validateRegistrationForm(HttpServletRequest req) {
+        Map<String, String> errors = new HashMap<>();
 
-        	if (ValidationUtil.isNullOrEmpty(fullname)) {
-				return "Fullname is required.";
-			}
+        try {
+            String fullname = FormUtils.getFormField(req, "fullname");
+            String email = FormUtils.getFormField(req, "email");
+            String username = FormUtils.getFormField(req, "username");
+            String password = FormUtils.getFormField(req, "password");
+            String cPassword = FormUtils.getFormField(req, "cPassword");
 
-            if (ValidationUtil.isNullOrEmpty(username)) {
-				return "Username is required.";
-			}
+            if (ValidationUtil.isNullOrEmpty(fullname)) errors.put("error_fullname", "Fullname is required.");
+            if (ValidationUtil.isNullOrEmpty(username)) errors.put("error_username", "Username is required.");
+            if (ValidationUtil.isNullOrEmpty(email)) errors.put("error_email", "Email is required.");
+            if (ValidationUtil.isNullOrEmpty(password)) errors.put("error_password", "Password is required.");
+            if (ValidationUtil.isNullOrEmpty(cPassword)) errors.put("error_cpassword", "Please retype the password.");
 
-            if (ValidationUtil.isNullOrEmpty(email)) {
-				return "Email is required.";
-			}
+            if (!errors.containsKey("error_username") && !ValidationUtil.isAlphanumericStartingWithLetter(username)) {
+                errors.put("error_username", "Username must start with a letter and contain only letters and numbers.");
+            }
 
-            if (ValidationUtil.isNullOrEmpty(password)) {
-				return "Password is required.";
-			}
+            if (!errors.containsKey("error_email") && !ValidationUtil.isValidEmail(email)) {
+                errors.put("error_email", "Invalid email format.");
+            }
 
-            if (ValidationUtil.isNullOrEmpty(cPassword)) {
-				return "Please retype the password.";
-			}
+            if (!errors.containsKey("error_password") && !ValidationUtil.isValidPassword(password)) {
+                errors.put("error_password", "Password must be at least 8 characters long, with 1 uppercase letter, 1 number, and 1 symbol.");
+            }
 
-            // Validate fields
-            if (!ValidationUtil.isAlphanumericStartingWithLetter(username)) {
-				return "Username must start with a letter and contain only letters and numbers.";
-			}
+            if (!errors.containsKey("error_cpassword") && !ValidationUtil.doPasswordsMatch(password, cPassword)) {
+                errors.put("error_cpassword", "Passwords do not match.");
+            }
+            
+            UserModel user = userService.getUserByUsername(username);
+            
+            System.out.println(user);
+            
+            if (user != null) {
+            	errors.put("error_username", "The user with this username already exists.");
+            }
 
-            if (!ValidationUtil.isValidEmail(email)) {
-				return "Invalid email format.";
-			}
+        } catch (Exception e) {
+            errors.put("error", "Invalid input.");
+        }
 
-            if (!ValidationUtil.isValidPassword(password)) {
-				return "Password must be at least 8 characters long, with 1 uppercase letter, 1 number, and 1 symbol.";
-			}
-
-            if (!ValidationUtil.doPasswordsMatch(password, cPassword)) {
-				return "Passwords do not match.";
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-	        return null;
-		}
-    	return null;
+        return errors;
     }
+
 
     private UserModel extractUserModel(HttpServletRequest req) throws Exception {
         String fullname = FormUtils.getFormField(req, "fullname");
@@ -130,13 +132,9 @@ public class RegisterController extends HttpServlet {
         String password = FormUtils.getFormField(req, "password");
 
         RoleModel userRole = roleService.getRole("user");
-        System.out.println(userRole.getName());
         int roleId = userRole.getRole_id();
-        System.out.println(roleId);
 
         String profilePicture = null;
-
-        // Encrypt the password before storing
         password = PasswordUtil.encrypt(username, password);
 
         boolean isImageUploaded = imageUtil.uploadImage(req, "profile_picture");
@@ -144,22 +142,22 @@ public class RegisterController extends HttpServlet {
             profilePicture = "/images/" + req.getPart("profile_picture").getSubmittedFileName();
         }
 
-        // Return a new UserModel with the extracted data
         return new UserModel(fullname, email, username, password, roleId, profilePicture);
     }
-    @SuppressWarnings(value = { "" })
-    private void handleSuccess(HttpServletRequest req, HttpServletResponse response, String message, String redirectPage)
-            throws ServletException, IOException {
-        req.setAttribute("success", message);
-        req.getRequestDispatcher(redirectPage).forward(req, response);
-    }
 
-    private void handleError(HttpServletRequest req, HttpServletResponse resp, String message)
+    private void handleError(HttpServletRequest req, HttpServletResponse resp, Map<String, String> errors)
             throws ServletException, IOException {
-        req.setAttribute("error", message);
+        
+        for (Map.Entry<String, String> entry : errors.entrySet()) {
+            req.setAttribute(entry.getKey(), entry.getValue());
+        }
+
         req.setAttribute("fullname", FormUtils.getFormField(req, "fullname"));
         req.setAttribute("username", FormUtils.getFormField(req, "username"));
         req.setAttribute("email", FormUtils.getFormField(req, "email"));
+
         req.getRequestDispatcher("/WEB-INF/pages/client/register.jsp").forward(req, resp);
     }
+
+
 }
