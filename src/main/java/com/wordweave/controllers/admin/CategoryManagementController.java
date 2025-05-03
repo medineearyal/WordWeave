@@ -56,11 +56,13 @@ public class CategoryManagementController extends HttpServlet {
             } else if (action.equals("delete")) {
                 int categoryId = Integer.parseInt(request.getParameter("id"));
                 categoryService.deleteCategory(categoryId);
-                response.sendRedirect("/WordWeave/admin/categories/");
+                
+                request.getSession().setAttribute("success", "Category Successfully Deleted.");
+                response.sendRedirect("/WordWeave/admin/categories");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("/WordWeave/admin/categories/");
+            response.sendRedirect("/WordWeave/admin/categories");
         }
     }
 
@@ -76,19 +78,24 @@ public class CategoryManagementController extends HttpServlet {
                 CategoryModel category = new CategoryModel();
                 category.setName(name);
                 categoryService.createCategory(category);
-
+                
+                request.getSession().setAttribute("success", "Category Successfully Created.");
             } else if ("edit".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
                 CategoryModel category = new CategoryModel();
                 category.setCategory_id(id);
                 category.setName(name);
                 categoryService.updateCategory(category);
+                
+                request.getSession().setAttribute("success", "Category Successfully Updated.");
             }
 
-            response.sendRedirect("/WordWeave/admin/categories/");
+            response.sendRedirect("/WordWeave/admin/categories");
+            
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("/WordWeave/admin/categories/");
+            request.getSession().setAttribute("error", "Failed To Create/Edit Cateogry.");
+            response.sendRedirect("/WordWeave/admin/categories");
         }
     }
 }

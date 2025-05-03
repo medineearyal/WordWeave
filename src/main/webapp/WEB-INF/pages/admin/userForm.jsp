@@ -13,11 +13,11 @@
 		<input type="hidden" name="action"
 			value="${actionText == 'Edit' ? 'edit' : 'create'}">
 		<c:if test="${actionText == 'Edit'}">
-			<input type="hidden" name="id" value="${user.user_id}">
+			<input type="hidden" name="id" value="${editUser.user_id}">
 		</c:if>
 
 		<label for="fullname"> <i class="fas fa-user"></i> <input
-			type="text" id="fullname" name="fullname" value="${user.fullname}"
+			type="text" id="fullname" name="fullname" value="${editUser.fullname}"
 			placeholder="Full Name" required>
 		</label>
 		<c:if test="${not empty fullnameError}">
@@ -25,7 +25,7 @@
 		</c:if>
 
 		<label for="username"> <i class="fas fa-user-tag"></i> <input
-			type="text" id="username" name="username" value="${user.username}"
+			type="text" id="username" name="username" value="${editUser.username}"
 			placeholder="Username" required>
 		</label>
 		<c:if test="${not empty usernameError}">
@@ -33,7 +33,7 @@
 		</c:if>
 
 		<label for="email"> <i class="fas fa-envelope"></i> <input
-			type="email" id="email" name="email" value="${user.email}"
+			type="email" id="email" name="email" value="${editUser.email}"
 			placeholder="Email" required>
 		</label>
 		<c:if test="${not empty emailError}">
@@ -50,19 +50,19 @@
 
 		<label for="password"> <i class="fas fa-lock"></i> <input
 			type="password" id="password" name="password"
-			value="${user.password}" placeholder="Password"
+			value="${editUser.password}" placeholder="Password"
 			<c:if test="${actionText == 'create'}">required</c:if>>
 		</label>
 		<c:if test="${not empty passwordError}">
 			<span class="form-error">${passwordError}</span>
 		</c:if>
-
+			
 		<label for="role_id"> <i class="fas fa-user-shield"></i> <select
 			name="role_id" id="role_id" required>
 				<option value="" disabled selected>Select Role</option>
 				<c:forEach var="role" items="${roles}">
 					<option value="${role.role_id}"
-						${user.role_id == role.role_id ? 'selected' : ''}>
+						${editUser.role_id == role.role_id ? 'selected' : ''}>
 						${role.name}</option>
 				</c:forEach>
 		</select>

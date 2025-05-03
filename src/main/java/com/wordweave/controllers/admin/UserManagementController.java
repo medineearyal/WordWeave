@@ -66,7 +66,7 @@ public class UserManagementController extends HttpServlet {
 				String actionText = "Edit";
 				UserModel user = userService.getUserById(userId);
 				user.setPassword("");
-				request.setAttribute("user", user);
+				request.setAttribute("editUser", user);
 				request.setAttribute("actionText", actionText);
 				request.setAttribute("roles", this.roles);
 			} catch (Exception e) {
@@ -79,8 +79,9 @@ public class UserManagementController extends HttpServlet {
 			try {
 				int userId = Integer.parseInt(request.getParameter("id"));
 				userService.deleteUser(userId);
+				request.getSession().setAttribute("success", "User Sucessfully Deleted..");
 			} catch (Exception e) {
-				e.printStackTrace();
+				request.getSession().setAttribute("error", "User Deletion Error..");
 			}
 			response.sendRedirect("/WordWeave/admin/users");
 		} else if (action.equals("create")) {
@@ -103,7 +104,7 @@ public class UserManagementController extends HttpServlet {
 
 				HashMap<String, String> errors = this.validateUser(userModel, true);
 
-				userModel.setPassword(PasswordUtil.encrypt(userModel.getPassword(), userModel.getUsername()));
+				userModel.setPassword(PasswordUtil.encrypt(userModel.getUsername(), userModel.getPassword()));
 
 				if (!errors.isEmpty()) {
 					for (Map.Entry<String, String> entry : errors.entrySet()) {
@@ -143,7 +144,7 @@ public class UserManagementController extends HttpServlet {
 				HashMap<String, String> errors = this.validateUser(userModel, false);
 				
 				if (passwordProvided) {
-					userModel.setPassword(PasswordUtil.encrypt(userModel.getPassword(), userModel.getUsername()));
+					userModel.setPassword(PasswordUtil.encrypt(userModel.getUsername(), userModel.getPassword()));
 				} else {
 					UserModel existingUser = userService.getUserById(userId);
 					userModel.setPassword(existingUser.getPassword());
@@ -184,7 +185,8 @@ public class UserManagementController extends HttpServlet {
 		String email = FormUtils.getFormField(req, "email");
 		String username = FormUtils.getFormField(req, "username");
 		String password = FormUtils.getFormField(req, "password");
-
+		System.out.println(username);
+		System.out.println(password);
 		int roleId = Integer.parseInt(req.getParameter("role_id"));
 
 		String profilePicture = null;
@@ -219,7 +221,6 @@ public class UserManagementController extends HttpServlet {
 			if (!ValidationUtil.isValidPassword(userModel.getPassword())) {
 				errors.put("passwordError", "Invalid password.");
 			}
-
 		}
 
 		return errors;

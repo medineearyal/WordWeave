@@ -65,6 +65,7 @@ public class RegisterController extends HttpServlet {
                 errors.put("error", "Our server is under maintenance. Please try again later!");
                 handleError(request, response, errors);
             } else if (isAdded) {
+            	request.setAttribute("success", "Account Successfully Created, Please Login.");
                 response.sendRedirect("/WordWeave/login");
             } else {
                 errors.put("error", "Could not register your account. Please try again later!");
@@ -110,8 +111,6 @@ public class RegisterController extends HttpServlet {
             }
             
             UserModel user = userService.getUserByUsername(username);
-            
-            System.out.println(user);
             
             if (user != null) {
             	errors.put("error_username", "The user with this username already exists.");

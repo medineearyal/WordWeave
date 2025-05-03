@@ -574,21 +574,21 @@ public class BlogService {
 	public int getPublishedBlogsCountByAuthorThisWeek(int authorId) {
 	    String sql = "SELECT COUNT(*) FROM blog WHERE is_draft = 0 AND author_id = ? " +
 	                 "AND WEEK(publish_date, 1) = WEEK(CURDATE(), 1) " +
-	                 "AND YEAR(publish_date) = YEAR(CURDATE())";  // Filter by current week
+	                 "AND YEAR(publish_date) = YEAR(CURDATE())";
 
 	    try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
-	        stmt.setInt(1, authorId);  // Set the author_id parameter to filter by the given author
+	        stmt.setInt(1, authorId);
 
 	        ResultSet rs = stmt.executeQuery();
 
 	        if (rs.next()) {
-	            return rs.getInt(1);  // Return the count of blogs for the given author for the current week
+	            return rs.getInt(1);
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
 
-	    return 0;  // Return 0 if there is an error or no published blogs for this author in the current week
+	    return 0;
 	}
 	
 	public int getPublishedBlogsCount() {

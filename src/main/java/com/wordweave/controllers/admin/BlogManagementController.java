@@ -66,13 +66,10 @@ public class BlogManagementController extends HttpServlet {
 			
 			UserModel user = userService.getUserByUsername(username);
 			
-				
-			
 			if (role.equals("user")) {
 				canEdit = true;
 				canView = true;
 				canCreate = true;
-				
 			}else if (role.equals("admin")) {
 				canEdit = true;
 				canView = true;
@@ -133,7 +130,7 @@ public class BlogManagementController extends HttpServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			response.sendRedirect("/WordWeave/admin/blogs/");
+			response.sendRedirect("/WordWeave/admin/blogs");
 
 		} else if (action.equals("create")) {
 			String actionText = "Create";
@@ -168,12 +165,12 @@ public class BlogManagementController extends HttpServlet {
 				
 				System.out.println(blog.getIsTrending());
 				
-				response.sendRedirect(request.getContextPath() + "/admin/blogs/");
+				response.sendRedirect(request.getContextPath() + "/admin/blogs");
 				return;
 				
 			} catch(Exception e) {
 				request.setAttribute("error", e);
-				request.getRequestDispatcher("/admin/blogs/").forward(request, response);
+				request.getRequestDispatcher("/admin/blogs").forward(request, response);
 				
 			}
 		}else if (action.equals("toggle-favorite")) {
@@ -254,7 +251,7 @@ public class BlogManagementController extends HttpServlet {
 					request.setAttribute("error", "Blog Update Error");
 				}
 				
-				response.sendRedirect(request.getContextPath() + "/admin/blogs/");
+				response.sendRedirect(request.getContextPath() + "/admin/blogs");
 				return;
 
 		    } catch (Exception e) {
@@ -297,12 +294,9 @@ public class BlogManagementController extends HttpServlet {
 			blog.setBlogId(blogId);
 
 			String[] selectedCategories = request.getParameterValues("categories");
-			System.out.println("Selected Categories: " + selectedCategories);
 
 			if (selectedCategories != null) {
 		        for (String categoryId : selectedCategories) {
-		        	System.out.println("CategoryId: " + categoryId);
-		        	System.out.println("BlogId: " + blog.getBlogId());
 		            try {
 						blogService.addCategoryToBlog(blog.getBlogId(), Integer.parseInt(categoryId));
 					} catch (NumberFormatException e) {
@@ -315,7 +309,7 @@ public class BlogManagementController extends HttpServlet {
 		        }
 		    }
 
-			response.sendRedirect("/WordWeave/admin/blogs/");
+			response.sendRedirect("/WordWeave/admin/blogs");
 		} else if (action.equals("edit")) {
 			int blogId = Integer.parseInt(request.getParameter("id"));
 		    Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
@@ -342,7 +336,7 @@ public class BlogManagementController extends HttpServlet {
 		        }
 		    }
 
-		    response.sendRedirect("/WordWeave/admin/blogs/");
+		    response.sendRedirect("/WordWeave/admin/blogs");
 
 		}
 	}

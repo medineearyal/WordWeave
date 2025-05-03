@@ -22,14 +22,18 @@
 		<thead>
 			<tr>
 				<th>SN</th>
-				<th>ID</th>
 				<th>Title</th>
-				<th>Author Name</th>
+				<c:if test="${role == 'moderator' }">
+					<th>Author Name</th>
+				</c:if>
 				<th>Publish Date</th>
 				<th>Last Updated</th>
 				<c:if test="${canApprove}">
 					<th>Trending</th>
 					<th>Is Approved</th>
+				</c:if>
+				<c:if test="${role == 'user' }">
+					<th>Status</th>
 				</c:if>
 				<th>Actions</th>
 			</tr>
@@ -38,9 +42,10 @@
 			<c:forEach var="blog" items="${blogs}" varStatus="loop">
 				<tr>
 					<td>${loop.index + 1}</td>
-					<td>${blog.blogId}</td>
 					<td>${blog.title}</td>
-					<td>${blog.authorName}</td>
+					<c:if test="${role == 'moderator' }">
+						<td>${blog.authorName}</td>
+					</c:if>
 					<td>${blog.publishDate}</td>
 					<td>${blog.updatedAt}</td>
 					<c:if test="${canApprove}">
@@ -62,6 +67,15 @@
 								</button>
 							</a>
 						</td>
+					</c:if>
+					
+					<c:if test="${role == 'user'}">
+					    <td>
+					        <c:choose>
+					            <c:when test="${blog.isDraft}">Pending</c:when>
+					            <c:otherwise>Approved</c:otherwise>
+					        </c:choose>
+					    </td>
 					</c:if>
 					
 					<td>

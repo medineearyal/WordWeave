@@ -82,21 +82,19 @@ a {
 	padding: 0;
 }
 
-.menu li, .others li {
+.menu li:hover, .others li:hover {
+	background-color: #fae4eb;
+}
+
+.others li a,
+.menu li a {
+	display: block;
+	width: 100%;
 	padding: 15px 10px;
 	margin: 5px 0;
 	cursor: pointer;
 	border-radius: 10px;
 	transition: background-color 0.3s ease;
-}
-
-.menu li:hover, .others li:hover {
-	background-color: #fae4eb;
-}
-
-.menu li a {
-	display: block;
-	width: 100%;
 }
 
 .main-content {

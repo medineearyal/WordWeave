@@ -8,7 +8,6 @@ import com.wordweave.models.RoleModel;
 import com.wordweave.models.UserModel;
 import com.wordweave.services.RoleService;
 import com.wordweave.services.UserService;
-import com.wordweave.utils.CookieUtil;
 import com.wordweave.utils.SessionUtil;
 
 import jakarta.servlet.RequestDispatcher;
@@ -64,6 +63,7 @@ public class LoginController extends HttpServlet {
 	    String password = req.getParameter("password");
 
 	    UserModel userModel = new UserModel(username, password);
+	    
 	    Boolean loginStatus = userService.loginUser(userModel);
 
 	    if (loginStatus != null && loginStatus) {

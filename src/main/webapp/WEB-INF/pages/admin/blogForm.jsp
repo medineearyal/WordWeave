@@ -28,21 +28,23 @@
 				<p>Current image: ${blog.image}</p>
 			</c:if>
 		</label>
-
+		
 		<label for="author_id" 
 		       <c:if test="${role == 'user'}">style="display:none;"</c:if>>
 		    <i class="fas fa-user"></i>
+		   
 		    <select id="author_id" name="author_id" required>
-		        <c:forEach var="user" items="${users}">
-		            <option value="${user.user_id}"
-		                <c:if test="${blog.authorId == user.user_id}">selected</c:if>>
-		                ${user.fullname} (${user.username})
-		            </option>
-		        </c:forEach>
-		    </select>
+			    <c:forEach var="u" items="${users}">
+			        <option value="${u.user_id}" 
+			            <c:if test="${(not empty blog.authorId and blog.authorId == u.user_id) 
+			                      or (empty blog.authorId and user.user_id == u.user_id)}">
+			                selected
+			            </c:if>>
+			            ${u.fullname} (${u.username})
+			        </option>
+			    </c:forEach>
+			</select>
 		</label>
-
-
 		
 		<label style="display: block;"> <i class="fas fa-tags"></i>
 			Select Categories:
