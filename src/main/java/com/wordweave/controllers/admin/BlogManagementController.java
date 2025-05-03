@@ -302,13 +302,15 @@ public class BlogManagementController extends HttpServlet {
 					} catch (NumberFormatException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						request.getSession().setAttribute("error", "Blog Faild to Create");
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						request.getSession().setAttribute("error", "Blog Faild to Create");
 					}
 		        }
 		    }
-
+			request.getSession().setAttribute("success", "Blog Successfully Created");
 			response.sendRedirect("/WordWeave/admin/blogs");
 		} else if (action.equals("edit")) {
 			int blogId = Integer.parseInt(request.getParameter("id"));
@@ -332,10 +334,12 @@ public class BlogManagementController extends HttpServlet {
 		                blogService.addCategoryToBlog(blogId, Integer.parseInt(categoryId));
 		            } catch (Exception e) {
 		                e.printStackTrace();
+		                request.getSession().setAttribute("error", "Category Faild to Fetch");
 		            }
 		        }
 		    }
-
+		    
+		    request.getSession().setAttribute("success", "Blog Successfully Edited");
 		    response.sendRedirect("/WordWeave/admin/blogs");
 
 		}

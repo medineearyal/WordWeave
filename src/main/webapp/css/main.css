@@ -611,12 +611,6 @@ select::after {
 	color: #777;
 }
 
-/* Make the grid responsive */
-@media ( max-width : 1200px) {
-	.main-article {
-		width: calc(50% - 20px); /* 2 cards in a row */
-	}
-}
 
 @media ( max-width : 768px) {
 	.main-article {
