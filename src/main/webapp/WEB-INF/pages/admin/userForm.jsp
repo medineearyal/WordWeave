@@ -47,31 +47,67 @@
 		<c:if test="${not empty profilePictureError}">
 			<span class="form-error">${profilePictureError}</span>
 		</c:if>
-
-		<label for="password"> <i class="fas fa-lock"></i> <input
-			type="password" id="password" name="password"
-			value="${editUser.password}" placeholder="Password"
-			<c:if test="${actionText == 'create'}">required</c:if>>
-		</label>
+		
+		
+		<c:choose>
+		    <c:when test="${actionText == 'Create' or actionText == 'Update'}">
+		        <label for="password">
+		            <i class="fas fa-lock"></i>
+		            <input
+		                type="password"
+		                id="password"
+		                name="password"
+		                value=""
+		                placeholder="Password"
+		                required>
+		        </label>
+		    </c:when>
+		    <c:otherwise>
+		        <label for="password" style="display: none;">
+		            <i class="fas fa-lock"></i>
+		            <input
+		                type="password"
+		                id="password"
+		                name="password"
+		                value=""
+		                placeholder="Password">
+		        </label>
+		    </c:otherwise>
+		</c:choose>
+		
 		<c:if test="${not empty passwordError}">
 			<span class="form-error">${passwordError}</span>
 		</c:if>
 			
-		<label for="role_id"> <i class="fas fa-user-shield"></i> <select
-			name="role_id" id="role_id" required>
-				<option value="" disabled selected>Select Role</option>
-				<c:forEach var="role" items="${roles}">
-					<option value="${role.role_id}"
-						${editUser.role_id == role.role_id ? 'selected' : ''}>
-						${role.name}</option>
-				</c:forEach>
-		</select>
-		</label>
+		<c:choose>
+		    <c:when test="${actionText != 'Update'}">
+		        <label for="role_id">
+		            <i class="fas fa-user-shield"></i>
+		            <select name="role_id" id="role_id" required>
+		                <option value="" disabled selected>Select Role</option>
+		                <c:forEach var="role" items="${roles}">
+		                    <option value="${role.role_id}"
+		                        <c:if test="${editUser.role_id == role.role_id}">selected</c:if>>
+		                        ${role.name}
+		                    </option>
+		                </c:forEach>
+		            </select>
+		        </label>
+		    </c:when>
+		    <c:otherwise>
+		        <label for="role_id">
+		            <i class="fas fa-user-shield"></i>
+		            <input type="hidden" id="role_id" name="role_id" value="${editUser.role_id}" />
+		            <input type="text" value="${role}" readonly disabled />
+		        </label>
+		    </c:otherwise>
+		</c:choose>
+		
 		<c:if test="${not empty roleError}">
 			<span class="form-error">${roleError}</span>
 		</c:if>
 
-		<button type="submit">${actionText}User</button>
+		<button type="submit">${actionText} User</button>
 	</form>
 </div>
 

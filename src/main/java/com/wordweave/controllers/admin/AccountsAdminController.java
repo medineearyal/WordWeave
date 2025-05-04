@@ -1,20 +1,19 @@
 package com.wordweave.controllers.admin;
 
 import java.io.IOException;
+import java.util.List;
 
+import com.wordweave.models.RoleModel;
 import com.wordweave.models.UserModel;
+import com.wordweave.services.RoleService;
 import com.wordweave.services.UserService;
-import com.wordweave.utils.CookieUtil;
-import com.wordweave.utils.SessionUtil;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class AccountsAdminController
@@ -23,13 +22,15 @@ import jakarta.servlet.http.HttpSession;
 public class AccountsAdminController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	UserService userService = new UserService();
+	List<RoleModel> roles;
+	RoleService roleSerivce = new RoleService();
 
     /**
      * @see HttpServlet#HttpServlet()
      */
     public AccountsAdminController() {
         super();
-        // TODO Auto-generated constructor stub
+        this.roles = roleSerivce.getAllRoles();
     }
 
 	/**
@@ -49,8 +50,9 @@ public class AccountsAdminController extends HttpServlet {
 		UserModel user = userService.getUserByUsername(username);
 
 		request.setAttribute("role", userRole);
-		request.setAttribute("user", user);
-		request.setAttribute("actionText", user.getFullname());
+		request.setAttribute("roles", this.roles);
+		request.setAttribute("editUser", user);
+		request.setAttribute("actionText", "Update");
 		request.setAttribute("profile", "view");
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/pages/admin/userForm.jsp");
 		dispatcher.forward(request, response);
