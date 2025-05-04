@@ -75,8 +75,10 @@ public class LoginController extends HttpServlet {
 	        SessionUtil.setAttribute(req, "role", role);
 	        
 	        if (role.equals("admin") || role.equals("moderator")) {
+	        	req.getSession().setAttribute("success", "You've been logged in successfully");
 	            resp.sendRedirect(req.getContextPath() + "/admin/dashboard");
 	        } else {
+	        	req.getSession().setAttribute("success", "You've been logged in successfully");
 	            resp.sendRedirect(req.getContextPath() + "/home");
 	        }
 	    } else {

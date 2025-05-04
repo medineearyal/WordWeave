@@ -59,7 +59,6 @@ public class BlogController extends HttpServlet {
 		        if (user != null) {
 		            int userId = user.getUser_id();
 		            List<Integer> favoriteBlogIds = blogService.getFavoriteBlogIdsByUser(userId);
-		            System.out.println(favoriteBlogIds);
 		            request.setAttribute("favoriteBlogIds", favoriteBlogIds);
 		        } else {
 		            request.setAttribute("error", "User not found.");
