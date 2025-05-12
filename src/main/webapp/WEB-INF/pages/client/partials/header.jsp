@@ -25,53 +25,60 @@
 </head>
 <body>
 	<header>
-		<nav>
-			<a href="/WordWeave"> 
-				<img src="/WordWeave/images/logo.png"class="nav-logo">
-			</a>
+    <nav>
+        <a href="/WordWeave"> 
+            <img src="/WordWeave/images/logo.png" class="nav-logo">
+        </a>
 
-			<div class="navigation">			
-				<a href="/WordWeave/search" class="search">
-                    <i class="fas fa-search ${pageContext.request.contextPath == '/search' ? 'active' : ''}"></i>
-                </a>
-                <a href="/WordWeave/home" class="link ${pageContext.request.contextPath == '/WordWeave/' ? 'active' : ''}">
-                    Home
-                </a>
-                <a href="/WordWeave/blogs" class="link ${pageContext.request.contextPath == '/blogs' ? 'active' : ''}">
-                    Blogs
-                </a>
-                <a href="/WordWeave/about" class="link ${pageContext.request.contextPath == '/about' ? 'active' : ''}">
-                    About Us
-                </a>
-                <a href="/WordWeave/contact" class="link ${pageContext.request.contextPath == '/contact' ? 'active' : ''}">
-                    Contact Us
-                </a>
+        <div class="navigation">
+            <a href="/WordWeave/search" class="search ${servletPath == '/search' ? 'active' : ''}">
+                <i class="fas fa-search"></i>
+            </a>
+            <a href="/WordWeave/" class="link ${servletPath == '/home' or servletPath == '/' ? 'active' : ''}">
+                Home
+            </a>
+            <a href="/WordWeave/blogs" class="link ${servletPath == '/blogs' ? 'active' : ''}">
+                Blogs
+            </a>
+            <a href="/WordWeave/about" class="link ${servletPath == '/about' ? 'active' : ''}">
+                About Us
+            </a>
+            <a href="/WordWeave/contact" class="link ${servletPath == '/contact' ? 'active' : ''}">
+                Contact Us
+            </a>
 
+            <%
+            String username = (String) request.getSession(false).getAttribute("username");
+            if (username != null) {
+            %>
+            <a href="/WordWeave/favourites"> 
+                <i class="fas fa-heart favorite-icon favorite"></i>
+            </a>
 
-				<%
-				String username = (String) request.getSession(false).getAttribute("username");
-				if (username != null) {
-				%>
-				<a href="/WordWeave/favourites"> <i
-					class="fas fa-heart favorite-icon favorite"></i>
-				</a> <a href="/WordWeave/admin/dashboard" class="link"> Dashboard </a>
-
-				<div class="user-nav-profile">
-					<i class="fa-solid fa-user" style="margin-right: 8px;"></i><strong>${ username }</strong>
-				</div>
-
-				<a href="/WordWeave/logout" class="link">Logout</a>
-				<%
-				} else {
-				%>
-				<a href="/WordWeave/login" class="link"><i
-					class="fa-solid fa-user"></i> Login</a>
-				<%
-				}
-				%>
-			</div>
-		</nav>
-	</header>
+            <!-- User profile and dropdown -->
+            <div class="user-dropdown">
+                <div class="user-nav-profile">
+                    <img src="${pageContext.request.contextPath}${user.profile_picture}" alt="User Profile Picture" />
+                    <strong><%= username %></strong>
+                    <i class="fa-solid fa-circle-chevron-down"></i>
+                </div>
+                <div class="dropdown-menu">
+                    <a href="/WordWeave/admin/dashboard" class="link">Dashboard</a>
+                    <a href="/WordWeave/logout" class="link">Logout</a>
+                </div>
+            </div>
+            <%
+            } else {
+            %>
+            <a href="/WordWeave/login" class="link ${servletPath == '/login' ? 'active' : ''}">
+                <i class="fa-solid fa-user"></i> Login
+            </a>
+            <%
+            }
+            %>
+        </div>
+    </nav>
+</header>
 
 	<div class="message-status">
 		<%

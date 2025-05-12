@@ -14,7 +14,7 @@ footer h2 {
 }
 
 footer .footer-content {
-	display: flex; 
+	display: flex;
 	justify-content: space-between;
 	padding: 2rem;
 }
@@ -27,7 +27,7 @@ footer .footer-content {
 	line-height: 1.75;
 }
 
-.left .text > * {
+.left .text>* {
 	margin-bottom: 1rem
 }
 
@@ -61,6 +61,6 @@ hr {
 }
 
 
-.contact >p {
+.contact>p {
 	margin-bottom: 0.5rem;
 }

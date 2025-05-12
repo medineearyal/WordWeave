@@ -91,7 +91,7 @@ public class BlogService {
 
 		return blogs;
 	}
-	
+
 	public List<BlogModel> getEveryBlogs() throws ClassNotFoundException {
 		List<BlogModel> blogs = new ArrayList<>();
 		String sql = "SELECT b.*, u.fullname AS author_name FROM blog b JOIN user u ON b.author_id = u.user_id;";
@@ -122,39 +122,39 @@ public class BlogService {
 
 		return blogs;
 	}
-	
+
 	public List<BlogModel> getEveryBlogs(String username) throws ClassNotFoundException {
-	    List<BlogModel> blogs = new ArrayList<>();
-	    String sql = "SELECT b.*, u.fullname AS author_name FROM blog b JOIN user u ON b.author_id = u.user_id WHERE u.username = ?;"; 
+		List<BlogModel> blogs = new ArrayList<>();
+		String sql = "SELECT b.*, u.fullname AS author_name FROM blog b JOIN user u ON b.author_id = u.user_id WHERE u.username = ?;";
 
-	    try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
-	        stmt.setString(1, username);
-	        
-	        try (ResultSet rs = stmt.executeQuery()) {
-	            while (rs.next()) {
-	                BlogModel blog = new BlogModel();
-	                blog.setBlogId(rs.getInt("blog_id"));
-	                blog.setImage(rs.getString("image"));
-	                blog.setContent(rs.getString("content"));
-	                blog.setTitle(rs.getString("title"));
-	                blog.setUpdatedAt(rs.getTimestamp("updated_at"));
-	                blog.setAuthorId(rs.getInt("author_id"));
-	                blog.setPublishDate(rs.getDate("publish_date"));
-	                blog.setCategories(getCategoriesForBlog(blog.getBlogId()));
-	                blog.setAuthorName(rs.getString("author_name"));
-	                blog.setIsTrending(rs.getBoolean("is_trending"));
-	                blog.setViews(rs.getInt("views"));
-	                blog.setIsDraft(rs.getBoolean("is_draft"));
+		try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
+			stmt.setString(1, username);
 
-	                blogs.add(blog);
-	            }
-	        }
+			try (ResultSet rs = stmt.executeQuery()) {
+				while (rs.next()) {
+					BlogModel blog = new BlogModel();
+					blog.setBlogId(rs.getInt("blog_id"));
+					blog.setImage(rs.getString("image"));
+					blog.setContent(rs.getString("content"));
+					blog.setTitle(rs.getString("title"));
+					blog.setUpdatedAt(rs.getTimestamp("updated_at"));
+					blog.setAuthorId(rs.getInt("author_id"));
+					blog.setPublishDate(rs.getDate("publish_date"));
+					blog.setCategories(getCategoriesForBlog(blog.getBlogId()));
+					blog.setAuthorName(rs.getString("author_name"));
+					blog.setIsTrending(rs.getBoolean("is_trending"));
+					blog.setViews(rs.getInt("views"));
+					blog.setIsDraft(rs.getBoolean("is_draft"));
 
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
+					blogs.add(blog);
+				}
+			}
 
-	    return blogs;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return blogs;
 	}
 
 	public List<BlogModel> getAllTrendingBlogs() {
@@ -241,7 +241,7 @@ public class BlogService {
 			return false;
 		}
 	}
-	
+
 	public boolean updateBlogStatus(BlogModel blog) {
 		if (isConnectionError || dbConn == null) {
 			return false;
@@ -385,8 +385,7 @@ public class BlogService {
 	public List<BlogModel> getFavoriteBlogsByUser(int userId) {
 		List<BlogModel> favoriteBlogs = new ArrayList<>();
 
-		String query = "SELECT b.* FROM blog b " + "JOIN favorite_blogs fb ON b.blog_id = fb.blog_id "
-				+ "WHERE fb.user_id = ?";
+		String query = "SELECT b.* FROM blog b JOIN favorite_blogs fb ON b.blog_id = fb.blog_id WHERE fb.user_id = ?";
 
 		try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
 			stmt.setInt(1, userId);
@@ -464,8 +463,7 @@ public class BlogService {
 		// SQL query to select blogs ordered by views count and join with users to get
 		// the author's name
 		String query = "SELECT b.blog_id, b.title, b.publish_date, b.content, b.views, b.image, u.fullname AS author_name "
-				+ "FROM blog b " + "JOIN user u ON b.author_id = u.user_id WHERE is_draft = 0 "
-				+ "ORDER BY b.views DESC";
+				+ "FROM blog b JOIN user u ON b.author_id = u.user_id WHERE is_draft = 0 ORDER BY b.views DESC";
 
 		try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
 			ResultSet rs = stmt.executeQuery();
@@ -556,58 +554,57 @@ public class BlogService {
 	}
 
 	public int getPublishedBlogsCountThisWeek() {
-	    String sql = "SELECT COUNT(*) FROM blog WHERE is_draft = 0 AND WEEK(publish_date, 1) = WEEK(CURDATE(), 1) AND YEAR(publish_date) = YEAR(CURDATE())";
+		String sql = "SELECT COUNT(*) FROM blog WHERE is_draft = 0 AND WEEK(publish_date, 1) = WEEK(CURDATE(), 1) AND YEAR(publish_date) = YEAR(CURDATE())";
 
-	    try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
-	        ResultSet rs = stmt.executeQuery();
+		try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
+			ResultSet rs = stmt.executeQuery();
 
-	        if (rs.next()) {
-	            return rs.getInt(1);  // Return the count of blogs
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
+			if (rs.next()) {
+				return rs.getInt(1); // Return the count of blogs
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-	    return 0;  // Return 0 if there is an error or no blogs found
+		return 0; // Return 0 if there is an error or no blogs found
 	}
 
 	public int getPublishedBlogsCountByAuthorThisWeek(int authorId) {
-	    String sql = "SELECT COUNT(*) FROM blog WHERE is_draft = 0 AND author_id = ? " +
-	                 "AND WEEK(publish_date, 1) = WEEK(CURDATE(), 1) " +
-	                 "AND YEAR(publish_date) = YEAR(CURDATE())";
+		String sql = "SELECT COUNT(*) FROM blog WHERE is_draft = 0 AND author_id = ? "
+				+ "AND WEEK(publish_date, 1) = WEEK(CURDATE(), 1) " + "AND YEAR(publish_date) = YEAR(CURDATE())";
 
-	    try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
-	        stmt.setInt(1, authorId);
+		try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
+			stmt.setInt(1, authorId);
 
-	        ResultSet rs = stmt.executeQuery();
+			ResultSet rs = stmt.executeQuery();
 
-	        if (rs.next()) {
-	            return rs.getInt(1);
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
+			if (rs.next()) {
+				return rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-	    return 0;
+		return 0;
 	}
-	
+
 	public int getPublishedBlogsCount() {
-	    String sql = "SELECT COUNT(*) FROM blog WHERE is_draft = 0;";  // Filter by current week
+		String sql = "SELECT COUNT(*) FROM blog WHERE is_draft = 0;"; // Filter by current week
 
-	    try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
+		try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
 
-	        ResultSet rs = stmt.executeQuery();
+			ResultSet rs = stmt.executeQuery();
 
-	        if (rs.next()) {
-	            return rs.getInt(1);  // Return the count of blogs for the given author for the current week
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
+			if (rs.next()) {
+				return rs.getInt(1); // Return the count of blogs for the given author for the current week
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-	    return 0;  // Return 0 if there is an error or no published blogs for this author in the current week
+		return 0; // Return 0 if there is an error or no published blogs for this author in the
+					// current week
 	}
-
 
 	public int getDraftBlogCountByAuthor(int userId) {
 		int draftCount = 0;
@@ -636,8 +633,8 @@ public class BlogService {
 		// You can also use `updated_at` instead of `publish_date` depending on your use
 		// case
 		String query = "SELECT b.blog_id, b.title, b.publish_date, b.content, b.image, u.fullname AS author_name "
-				+ "FROM blog b " + "JOIN user u ON b.author_id = u.user_id " + "WHERE is_draft = ? " +
-				"ORDER BY b.publish_date DESC " + "LIMIT ?";
+				+ "FROM blog b " + "JOIN user u ON b.author_id = u.user_id " + "WHERE is_draft = ? "
+				+ "ORDER BY b.publish_date DESC " + "LIMIT ?";
 
 		try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
 			stmt.setBoolean(1, is_draft);

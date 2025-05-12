@@ -7,10 +7,10 @@ import java.sql.SQLException;
 public class DbConfig {
 
 	// Database configuration information
-	private static final String DB_NAME = "wordweave";
+	private static final String DB_NAME = "WordWeave";
 	private static final String URL = "jdbc:mysql://localhost:3306/" + DB_NAME;
 	private static final String USERNAME = "root";
-	private static final String PASSWORD = "";
+	private static final String PASSWORD = "admin@123";
 
 	/**
 	 * Establishes a connection to the database.

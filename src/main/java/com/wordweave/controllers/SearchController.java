@@ -1,8 +1,6 @@
 package com.wordweave.controllers;
 
 import java.io.IOException;
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.wordweave.models.BlogModel;

@@ -7,7 +7,6 @@ import com.wordweave.models.BlogModel;
 import com.wordweave.models.UserModel;
 import com.wordweave.services.BlogService;
 import com.wordweave.services.UserService;
-import com.wordweave.utils.SessionUtil;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;

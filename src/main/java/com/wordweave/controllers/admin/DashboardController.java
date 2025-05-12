@@ -3,22 +3,17 @@ package com.wordweave.controllers.admin;
 import java.io.IOException;
 import java.util.List;
 
-import com.mysql.cj.Session;
 import com.wordweave.models.BlogModel;
 import com.wordweave.models.UserModel;
 import com.wordweave.services.BlogService;
 import com.wordweave.services.UserService;
-import com.wordweave.utils.CookieUtil;
-import com.wordweave.utils.SessionUtil;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class DashboardController
@@ -45,6 +40,7 @@ public class DashboardController extends HttpServlet {
 		// TODO Auto-generated method stub
 		String userRole = (String) request.getAttribute("role");
 		String username = (String) request.getAttribute("username");
+	
 		
 		if (username == null && userRole == null) {
 			response.sendRedirect("/WordWeave/login");

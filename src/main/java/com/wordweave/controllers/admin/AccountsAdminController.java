@@ -54,6 +54,7 @@ public class AccountsAdminController extends HttpServlet {
 		request.setAttribute("editUser", user);
 		request.setAttribute("actionText", "Update");
 		request.setAttribute("profile", "view");
+		
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/pages/admin/userForm.jsp");
 		dispatcher.forward(request, response);
 	}

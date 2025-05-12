@@ -13,7 +13,9 @@
 	--h1: 3rem;
 }
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
@@ -38,7 +40,8 @@ button {
 	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-input, textarea {
+input,
+textarea {
 	border: none;
 	outline: none;
 	background: transparent;
@@ -54,12 +57,16 @@ a {
 .sidebar {
 	width: 250px;
 	background-color: #f1ece4;
+	max-height: 100vh;
 	height: 100vh;
 	padding: 20px;
 	box-sizing: border-box;
+	position: sticky;
+	top: 0;
+	left: 0;
 }
 
-.logo-section {
+.logo-section a {
 	display: flex;
 	align-items: center;
 	margin-bottom: 30px;
@@ -77,12 +84,14 @@ a {
 	color: #4d1f26;
 }
 
-.menu, .others {
+.menu,
+.others {
 	list-style: none;
 	padding: 0;
 }
 
-.menu li:hover, .others li:hover {
+.menu li:hover,
+.others li:hover {
 	background-color: #fae4eb;
 }
 
@@ -136,7 +145,7 @@ a {
 }
 
 .card:hover {
-	border: 2px solid #e0a4b0;
+	box-shadow: 0 0 10px rgba(224, 164, 176, 0.5), 0 0 0 2px #e0a4b0;
 }
 
 .card img {
@@ -206,7 +215,8 @@ table {
 	margin-top: 30px;
 }
 
-table th, table td {
+table th,
+table td {
 	padding: 12px 15px;
 	border: 1px solid #ddd;
 	text-align: left;
@@ -221,15 +231,18 @@ table tr:hover {
 	background-color: #f9e8ee;
 }
 
-.login-form, .message-form {
+.login-form,
+.message-form {
 	display: flex;
 	flex-direction: column;
 	gap: 15px;
 	width: 50%;
 }
 
-.login-form label, .message-form label, .search-box label,
-	.input-container {
+.login-form label,
+.message-form label,
+.search-box label,
+.input-container {
 	display: flex;
 	align-items: center;
 	background: #f1dede;
@@ -237,7 +250,10 @@ table tr:hover {
 	border-radius: 8px;
 }
 
-.login-form i, .message-form i, .search-box i, .input-container i {
+.login-form i,
+.message-form i,
+.search-box i,
+.input-container i {
 	margin-right: 10px;
 	color: black;
 }
@@ -356,37 +372,39 @@ select::after {
 }
 
 .form-error {
-    color: #e74c3c;
-    font-size: 1rem;
-    margin-top: 5px;
-    margin-bottom: 10px;
+	color: #e74c3c;
+	font-size: 1rem;
+	margin-top: 5px;
+	margin-bottom: 10px;
 }
 
 .notification {
-    position: fixed;
-    width: 100%;	
-    top: 0px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 15px 30px;
-    border-radius: 5px;
-    color: white;
-    font-size: 16px;
-    z-index: 99999999;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.5s, visibility 0.5s;
+	position: fixed;
+	width: 100%;
+	top: 0px;
+	left: 50%;
+	transform: translateX(-50%);
+	padding: 15px 30px;
+	border-radius: 5px;
+	color: white;
+	font-size: 16px;
+	z-index: 99999999;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.5s, visibility 0.5s;
 }
 
 .notification.success {
-    background-color: #4CAF50; /* Green */
+	background-color: #4CAF50;
+	/* Green */
 }
 
 .notification.error {
-    background-color: #f44336; /* Red */
+	background-color: #f44336;
+	/* Red */
 }
 
 .notification.show {
-    opacity: 1;
-    visibility: visible;
+	opacity: 1;
+	visibility: visible;
 }

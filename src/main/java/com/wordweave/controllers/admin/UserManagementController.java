@@ -55,10 +55,11 @@ public class UserManagementController extends HttpServlet {
 				List<UserModel> users = userService.getAllUsers();
 				request.setAttribute("users", users);
 				request.setAttribute("roles", this.roles);
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
+			
 			request.getRequestDispatcher("/WEB-INF/pages/admin/userList.jsp").forward(request, response);
 		} else if (action.equals("edit")) {
 			try {
@@ -185,9 +186,8 @@ public class UserManagementController extends HttpServlet {
 		String email = FormUtils.getFormField(req, "email");
 		String username = FormUtils.getFormField(req, "username");
 		String password = FormUtils.getFormField(req, "password");
-		System.out.println(username);
-		System.out.println(password);
 		int roleId = Integer.parseInt(req.getParameter("role_id"));
+		
 
 		String profilePicture = null;
 

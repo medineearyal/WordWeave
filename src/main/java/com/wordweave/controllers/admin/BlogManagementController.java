@@ -13,18 +13,14 @@ import com.wordweave.services.BlogService;
 import com.wordweave.services.CategoryService;
 import com.wordweave.services.FavoriteBlogModel;
 import com.wordweave.services.UserService;
-import com.wordweave.utils.CookieUtil;
 import com.wordweave.utils.ImageUtil;
-import com.wordweave.utils.SessionUtil;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class BlogAdminController
@@ -183,6 +179,8 @@ public class BlogManagementController extends HttpServlet {
 		        
 		        // Check if the blog is already marked as a favorite
 		        boolean isFavorite = blogService.isBlogFavorite(user.getUser_id(), blogId);
+		        
+		        System.out.println(isFavorite);
 
 		        if (isFavorite) {
 		            boolean isRemoved = blogService.removeFromFavorite(user.getUser_id(), blogId);
@@ -225,6 +223,7 @@ public class BlogManagementController extends HttpServlet {
 
 		        String errorResponse = "{ \"status\": \"error\", \"message\": \"" + e.getMessage() + "\" }";
 		        response.getWriter().write(errorResponse);
+		        e.printStackTrace();
 		    }
 		}else if (action.equals("toggle-draft")) {
 		    try {

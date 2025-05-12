@@ -75,6 +75,7 @@ public class RegisterController extends HttpServlet {
             Map<String, String> errors = new HashMap<>();
             errors.put("error", "An unexpected error occurred. Please try again later!");
             handleError(request, response, errors);
+            e.printStackTrace();
         }
     }
 

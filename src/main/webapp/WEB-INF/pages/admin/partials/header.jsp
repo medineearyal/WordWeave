@@ -18,7 +18,9 @@
 <body>
 	<div class="sidebar">
 		<div class="logo-section">
-			<img src="/WordWeave/images/logo.png" alt="Logo"> <span>WORDWEAVE</span>
+			<a href="/WordWeave/">
+				<img src="/WordWeave/images/logo.png" alt="Logo"> <span>WORDWEAVE</span>
+			</a>
 		</div>
 		<ul class="menu">
 			<li><a href="/WordWeave/admin/dashboard">Dashboard</a></li>

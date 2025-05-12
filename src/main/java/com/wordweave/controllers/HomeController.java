@@ -7,7 +7,6 @@ import com.wordweave.models.BlogModel;
 import com.wordweave.models.UserModel;
 import com.wordweave.services.BlogService;
 import com.wordweave.services.UserService;
-import com.wordweave.utils.SessionUtil;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -15,7 +14,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class HomeController
@@ -75,7 +73,7 @@ public class HomeController extends HttpServlet {
 		    e.printStackTrace();
 		    request.setAttribute("error", "An error occurred while fetching the blogs.");
 		}
-
+		
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/pages/client/index.jsp");
 	    dispatcher.forward(request, response);
 

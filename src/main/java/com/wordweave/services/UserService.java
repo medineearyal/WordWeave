@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.wordweave.config.DbConfig;
-import com.wordweave.models.BlogModel;
 import com.wordweave.models.UserModel;
 import com.wordweave.utils.PasswordUtil;
 

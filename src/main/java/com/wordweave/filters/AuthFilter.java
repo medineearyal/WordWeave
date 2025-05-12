@@ -1,5 +1,10 @@
 package com.wordweave.filters;
 
+import java.io.IOException;
+
+import com.wordweave.models.UserModel;
+import com.wordweave.services.UserService;
+
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -7,23 +12,23 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
-import java.io.IOException;
-
-import com.wordweave.utils.CookieUtil;
 
 /**
  * Servlet Filter implementation class AuthFilter
  */
 @WebFilter("/*")
 public class AuthFilter extends HttpFilter implements Filter {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8986607195582074099L;
 	private static final String[] PUBLIC_PATHS = { "/", "/home", "/login", "/register", "/about", "/contact" };
 	private static final String[] STATIC_RESOURCES = {"/css/", "/js/", "/images/"};
+	private static final UserService userSerivce = new UserService();
 
 	/**
 	 * @see HttpFilter#HttpFilter()
@@ -46,29 +51,30 @@ public class AuthFilter extends HttpFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         
-        HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse res = (HttpServletResponse) response;
-        HttpSession session = req.getSession(false);
+		HttpServletRequest req = (HttpServletRequest) request;
+	    HttpServletResponse res = (HttpServletResponse) response;
+	    HttpSession session = req.getSession(false);
 
-        String path = req.getRequestURI().substring(req.getContextPath().length());
-        
-        boolean isLoggedIn = session != null && session.getAttribute("username") != null && session.getAttribute("role") != null;
+	    String path = req.getRequestURI().substring(req.getContextPath().length());
+	    String realPath = req.getServletContext().getRealPath(path);
 
-        if (isLoggedIn) {
-            String username = (String) session.getAttribute("username");
-            String role = (String) session.getAttribute("role");
-            
-            req.setAttribute("username", username);
-            req.setAttribute("role", role);
-        }
+	    req.setAttribute("servletPath", req.getServletPath());
 
-        boolean isPublic = isPublicPath(path) || isStaticResource(path);
+	    boolean isLoggedIn = session != null && session.getAttribute("username") != null && session.getAttribute("role") != null;
+	    if (isLoggedIn) {
+	        req.setAttribute("username", session.getAttribute("username"));
+	        req.setAttribute("role", session.getAttribute("role"));
+	        
+	        UserModel user = userSerivce.getUserByUsername((String)session.getAttribute("username"));
+	        req.setAttribute("user", user);
+	    }
 
-        if (isLoggedIn || isPublic) {
-            chain.doFilter(request, response);
-        } else {
-            res.sendRedirect(req.getContextPath() + "/login");
-        }
+	    boolean isPublic = isPublicPath(path) || isStaticResource(path);
+	    if (isLoggedIn || isPublic) {
+	        chain.doFilter(request, response);  // proceed to servlet or JSP
+	    } else {
+	        res.sendRedirect(req.getContextPath() + "/login");
+	    }
     }
 
     private boolean isPublicPath(String path) {
@@ -92,7 +98,7 @@ public class AuthFilter extends HttpFilter implements Filter {
 
 	/**
 	 * @see Filter#init(FilterConfig)
-	 */
+	*/
 	public void init(FilterConfig fConfig) throws ServletException {
 		// TODO Auto-generated method stub
 	}

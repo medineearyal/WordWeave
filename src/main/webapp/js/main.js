@@ -45,30 +45,24 @@ document.addEventListener("DOMContentLoaded", function() {
 			if (!username) {
 				window.location.href = "/WordWeave/login";
 			} else {
-				fetch(`/WordWeave/admin/blogs/?action=toggle-favorite&username=${username}&blogId=${blogId}`,
+				fetch(`/WordWeave/admin/blogs?action=toggle-favorite&username=${username}&blogId=${blogId}`,
 					{
 						'method': 'GET',
 					})
 					.then(response => response.json())
 					.then(data => {
-						alert(data.message);
-
+						const messageStatus = document.querySelector(".message-status");
+						const div = document.createElement("div");
+						div.classList.add("notification", "success");
+						div.innerHTML = data.message;
+						messageStatus.append(div);
+						showNotification(div);
 					});
 			}
 		});
 	});
-
-	const notifications = document.querySelectorAll('.notification');
-
-	notifications.forEach(notification => {
-		// Show the notification
-		notification.classList.add('show');
-
-		// Fade out after 5 seconds
-		setTimeout(() => {
-			notification.classList.remove('show');
-		}, 5000);  // 5 seconds
-	});
+	
+	document.querySelectorAll('.notification').forEach(showNotification);
 
 	getCopyrightDate();
 });
@@ -76,9 +70,9 @@ document.addEventListener("DOMContentLoaded", function() {
 window.addEventListener("scroll", function() {
 	const header = document.querySelector("header");
 	if (window.scrollY > 0) {
-		header.classList.add("scrolled");
+		header?.classList.add("scrolled");
 	} else {
-		header.classList.remove("scrolled");
+		header?.classList.remove("scrolled");
 	}
 });
 
@@ -93,4 +87,12 @@ function getCopyrightDate() {
 function clearSearchInput() {
 	const searchInput = document.getElementById("Search");
 	searchInput.value = "";
+}
+
+function showNotification(notificationElement) {
+	notificationElement.classList.add('show');
+
+	setTimeout(() => {
+		notificationElement.classList.remove('show');
+	}, 5000);
 }
