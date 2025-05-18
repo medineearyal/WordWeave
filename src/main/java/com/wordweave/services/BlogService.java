@@ -94,7 +94,7 @@ public class BlogService {
 
 	public List<BlogModel> getEveryBlogs() throws ClassNotFoundException {
 		List<BlogModel> blogs = new ArrayList<>();
-		String sql = "SELECT b.*, u.fullname AS author_name FROM blog b JOIN user u ON b.author_id = u.user_id;";
+		String sql = "SELECT b.*, u.fullname AS author_name FROM blog b JOIN user u ON b.author_id = u.user_id ORDER BY updated_at DESC;";
 
 		try (PreparedStatement stmt = dbConn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
 
@@ -125,7 +125,7 @@ public class BlogService {
 
 	public List<BlogModel> getEveryBlogs(String username) throws ClassNotFoundException {
 		List<BlogModel> blogs = new ArrayList<>();
-		String sql = "SELECT b.*, u.fullname AS author_name FROM blog b JOIN user u ON b.author_id = u.user_id WHERE u.username = ?;";
+		String sql = "SELECT b.*, u.fullname AS author_name FROM blog b JOIN user u ON b.author_id = u.user_id WHERE u.username = ? ORDER BY updated_at DESC;";
 
 		try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
 			stmt.setString(1, username);
@@ -159,7 +159,7 @@ public class BlogService {
 
 	public List<BlogModel> getAllTrendingBlogs() {
 		List<BlogModel> blogs = new ArrayList<>();
-		String sql = "SELECT b.*, u.fullname AS author_name FROM blog b JOIN user u ON b.author_id = u.user_id WHERE is_trending = true and is_draft = 0;";
+		String sql = "SELECT b.*, u.fullname AS author_name FROM blog b JOIN user u ON b.author_id = u.user_id WHERE is_trending = true and is_draft = 0 ORDER BY updated_at DESC;";
 
 		try (PreparedStatement stmt = dbConn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
 
@@ -385,7 +385,7 @@ public class BlogService {
 	public List<BlogModel> getFavoriteBlogsByUser(int userId) {
 		List<BlogModel> favoriteBlogs = new ArrayList<>();
 
-		String query = "SELECT b.* FROM blog b JOIN favorite_blogs fb ON b.blog_id = fb.blog_id WHERE fb.user_id = ?";
+		String query = "SELECT b.* FROM blog b JOIN favorite_blogs fb ON b.blog_id = fb.blog_id WHERE fb.user_id = ? ORDER BY b.updated_at DESC";
 
 		try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
 			stmt.setInt(1, userId);
