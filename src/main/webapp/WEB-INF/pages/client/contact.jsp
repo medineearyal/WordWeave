@@ -7,7 +7,7 @@
 	<h1 class="h1">Contact Us</h1>
 
 	<div class="main-container">
-		<form class="message-form" method="POST">
+		<form class="message-form" method="POST" novalidate>
 			<label for="Fname"> 
 				<i class="fas fa-edit"></i> 
 				<input type="text" id="Fname" placeholder="Full Name" name="fullName" 
@@ -56,7 +56,7 @@
 		</form>
 		
 		<div class="image">
-			<img src="/WordWeave/images/Person.png" alt="image">
+			<img src="/wordweave/images/Person.png" alt="image">
 		</div>
 	</div>
 </section>

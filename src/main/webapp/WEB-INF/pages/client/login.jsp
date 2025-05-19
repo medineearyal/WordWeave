@@ -5,7 +5,7 @@
 	<h1 class="h1">LOGIN</h1>
 
 	<div class="main-container">
-		<form class="login-form" method="post">
+		<form class="login-form" method="post" novalidate>
 			<c:if test="${not empty error}">
 				<div class="error-message" style="color: red; font-weight: bold; margin-bottom: 10px;">
 					${error}
@@ -39,14 +39,14 @@
 					</div>
 					<div class="register-link">
 						<strong>No Account?</strong> 
-						<a href="/WordWeave/register" class="login">Register.</a>
+						<a href="/wordweave/register" class="login">Register.</a>
 					</div>
 				</div>
 			</div>
 		</form>
 
 		<div class="image">
-			<img src="/WordWeave/images/Person.png" alt="image">
+			<img src="/wordweave/images/Person.png" alt="image">
 		</div>
 	</div>
 </section>

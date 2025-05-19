@@ -39,7 +39,7 @@ public class ContactAdminController extends HttpServlet {
 		String username = (String) request.getAttribute("username");
 		
 		if (username == null && userRole == null) {
-			response.sendRedirect("/WordWeave/login");
+			response.sendRedirect("/wordweave/login");
 			return;
 		}
 		request.setAttribute("role", userRole);

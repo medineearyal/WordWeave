@@ -45,7 +45,7 @@ public class UserManagementController extends HttpServlet {
 		String username = (String) request.getAttribute("username");
 
 		if (username == null && userRole == null) {
-			response.sendRedirect("/WordWeave/login");
+			response.sendRedirect("/wordweave/login");
 			return;
 		}
 
@@ -73,6 +73,14 @@ public class UserManagementController extends HttpServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			
+			String fromLocation = request.getParameter("from") == null ? request.getParameter("from") : "";
+			System.out.println(fromLocation);
+			if (fromLocation.equals("accounts")) {
+				response.sendRedirect("/wordweave/admin/accounts");
+				return;
+			}
+			
 
 			request.getRequestDispatcher("/WEB-INF/pages/admin/userForm.jsp").forward(request, response);
 
@@ -84,7 +92,7 @@ public class UserManagementController extends HttpServlet {
 			} catch (Exception e) {
 				request.getSession().setAttribute("error", "User Deletion Error..");
 			}
-			response.sendRedirect("/WordWeave/admin/users");
+			response.sendRedirect("/wordweave/admin/users");
 		} else if (action.equals("create")) {
 			String actionText = "Create";
 			request.setAttribute("actionText", actionText);
@@ -135,6 +143,7 @@ public class UserManagementController extends HttpServlet {
 
 		} else if (action.equals("edit")) {
 			int userId = Integer.parseInt(request.getParameter("id"));
+			
 			UserModel userModel;
 			try {
 				userModel = extractUserModel(request);
@@ -165,8 +174,10 @@ public class UserManagementController extends HttpServlet {
 				Boolean isUpdated = userService.updateUser(userModel);
 				if (isUpdated) {
 					request.setAttribute("success", "User successfully updated!");
+					request.getSession().setAttribute("success", "User successfully updated!");
 				} else {
 					request.setAttribute("error", "Failed to update user.");
+					request.getSession().setAttribute("error", "Failed to update user.");
 				}
 				request.setAttribute("user", userModel);
 				request.setAttribute("actionText", "Edit");
@@ -194,6 +205,8 @@ public class UserManagementController extends HttpServlet {
 		boolean isImageUploaded = imageUtil.uploadImage(req, "profile_picture");
 		if (isImageUploaded) {
 			profilePicture = "/images/" + req.getPart("profile_picture").getSubmittedFileName();
+		}else {
+			profilePicture = FormUtils.getFormField(req, "existing_profile_picture");
 		}
 
 		return new UserModel(fullname, email, username, password, roleId, profilePicture);

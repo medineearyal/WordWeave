@@ -50,7 +50,7 @@ public class BlogManagementController extends HttpServlet {
 	
 		
 		if (username == null && userRole == null) {
-			response.sendRedirect("/WordWeave/login");
+			response.sendRedirect("/wordweave/login");
 			return;
 		}else {
 			role = userRole;
@@ -126,7 +126,7 @@ public class BlogManagementController extends HttpServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			response.sendRedirect("/WordWeave/admin/blogs");
+			response.sendRedirect("/wordweave/admin/blogs");
 
 		} else if (action.equals("create")) {
 			String actionText = "Create";
@@ -310,7 +310,7 @@ public class BlogManagementController extends HttpServlet {
 		        }
 		    }
 			request.getSession().setAttribute("success", "Blog Successfully Created");
-			response.sendRedirect("/WordWeave/admin/blogs");
+			response.sendRedirect("/wordweave/admin/blogs");
 		} else if (action.equals("edit")) {
 			int blogId = Integer.parseInt(request.getParameter("id"));
 		    Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
@@ -339,7 +339,7 @@ public class BlogManagementController extends HttpServlet {
 		    }
 		    
 		    request.getSession().setAttribute("success", "Blog Successfully Edited");
-		    response.sendRedirect("/WordWeave/admin/blogs");
+		    response.sendRedirect("/wordweave/admin/blogs");
 
 		}
 	}

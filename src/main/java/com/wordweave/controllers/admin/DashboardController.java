@@ -43,7 +43,7 @@ public class DashboardController extends HttpServlet {
 	
 		
 		if (username == null && userRole == null) {
-			response.sendRedirect("/WordWeave/login");
+			response.sendRedirect("/wordweave/login");
 			return;
 		}else {
 			String role = userRole;

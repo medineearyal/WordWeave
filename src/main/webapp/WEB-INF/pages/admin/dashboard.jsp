@@ -11,7 +11,7 @@
 	<div class="dashboard-layout">
 		<div class="card"
 			style="display: grid; grid-template-columns: 2fr 1fr; align-items: center;">
-			<img src="/WordWeave/images/blogimage.png" alt="Blog Icon"
+			<img src="/wordweave/images/blogimage.png" alt="Blog Icon"
 				style="height: 100%; width: 100%; order: 1; object-fit: cover;" />
 			<div class="card-content">
 				<h3 style="font-size: 2rem; color: var(--accent-color);">Total
@@ -40,7 +40,7 @@
 
 			<c:if
 				test="${recentDraftedBlogs != null and !recentDraftedBlogs.isEmpty() and role != null and role.toLowerCase() == 'user'}">
-				<h4 style="margin-bottom: 0.5rem; font-size: 18px;">Blogs
+				<h4 style="margin-bottom: 1rem; font-size: 18px;">Blogs
 					Waiting For Approval</h4>
 				<div class="timeline">
 					<c:forEach var="blog" items="${recentDraftedBlogs}"

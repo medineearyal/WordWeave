@@ -28,7 +28,7 @@
                     <td>${contact.senderEmail}</td>
                     <td>${fn:substring(contact.messageText, 0, 50)}...</td>
                     <td>${contact.messageDate }</td>
-                    <td><a href="/WordWeave/admin/contacts/?action=view&id=${contact.messageId}"><i class="fa-solid fa-eye"></i></a></td>
+                    <td><a href="/wordweave/admin/contacts/?action=view&id=${contact.messageId}"><i class="fa-solid fa-eye"></i></a></td>
                 </tr>
             </c:forEach>
 		</tbody>

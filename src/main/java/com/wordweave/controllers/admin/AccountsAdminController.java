@@ -43,14 +43,15 @@ public class AccountsAdminController extends HttpServlet {
 		String username = (String) request.getAttribute("username");
 		
 		if (username == null && userRole == null) {
-			response.sendRedirect("/WordWeave/login");
+			response.sendRedirect("/wordweave/login");
 			return;
 		}
 		
 		UserModel user = userService.getUserByUsername(username);
+		RoleModel role = roleSerivce.getRole(userRole);
 
 		request.setAttribute("role", userRole);
-		request.setAttribute("roles", this.roles);
+		request.setAttribute("roleObject", role);
 		request.setAttribute("editUser", user);
 		request.setAttribute("actionText", "Update");
 		request.setAttribute("profile", "view");

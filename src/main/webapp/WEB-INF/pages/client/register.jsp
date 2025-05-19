@@ -7,7 +7,7 @@
 	<h1 class="h1">REGISTER</h1>
 
 	<div class="main-container">
-		<form class="login-form" action="" method="post" enctype="multipart/form-data">
+		<form class="login-form" action="" method="post" enctype="multipart/form-data" novalidate>
 
 			<c:if test="${not empty error}">
 				<div class="error-message" style="color: red; font-weight: bold; margin-bottom: 10px;">
@@ -72,14 +72,14 @@
 					</div>
 					<div class="register-link">
 						<strong> Already have an Account?</strong>
-						<a href="/WordWeave/login" class="login">Login</a>
+						<a href="/wordweave/login" class="login">Login</a>
 					</div>
 				</div>
 			</div>
 		</form>
 
 		<div class="image">
-			<img src="/WordWeave/images/Person.png" alt="image">
+			<img src="/wordweave/images/Person.png" alt="image">
 		</div>
 	</div>
 </section>

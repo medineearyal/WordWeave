@@ -8,37 +8,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wordweave Dashboard</title>
+<title>Wordweave Dashboard - </title>
 <!-- Add Font Awesome -->
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="/WordWeave/css/admin/admin.css" />
+<link rel="stylesheet" href="/wordweave/css/admin/admin.css" />
 </head>
 
 <body>
 	<div class="sidebar">
 		<div class="logo-section">
-			<a href="/WordWeave/">
-				<img src="/WordWeave/images/logo.png" alt="Logo"> <span>WORDWEAVE</span>
+			<a href="/wordweave/">
+				<img src="/wordweave/images/logo.png" alt="Logo"> <span>WORDWEAVE</span>
 			</a>
 		</div>
 		<ul class="menu">
-			<li><a href="/WordWeave/admin/dashboard">Dashboard</a></li>
+			<li><a href="/wordweave/admin/dashboard">Dashboard</a></li>
 			
 			<c:if test="${role != null and role.toLowerCase().equals('admin')}">
-				<li><a href="/WordWeave/admin/users">Users</a></li>
+				<li><a href="/wordweave/admin/users">Users</a></li>
 			</c:if>
 
-			<li><a href="/WordWeave/admin/blogs">Blogs</a></li>
-			<li><a href="/WordWeave/admin/categories">Categories</a></li>
+			<li><a href="/wordweave/admin/blogs">Blogs</a></li>
+			<li><a href="/wordweave/admin/categories">Categories</a></li>
 			
 			<c:if test="${role != null and role.toLowerCase().equals('user')}">
-				<li><a href="/WordWeave/admin/contacts">Contacts</a></li>
+				<li><a href="/wordweave/admin/contacts">Contacts</a></li>
 			</c:if>
 			
 		</ul>
 		<ul class="others">
-			<li><a href="/WordWeave/admin/accounts">Accounts</a></li>
+			<li><a href="/wordweave/admin/accounts">Accounts</a></li>
 		</ul>
 	</div>
 	<div class="message-status">

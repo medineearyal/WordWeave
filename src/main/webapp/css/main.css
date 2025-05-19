@@ -349,7 +349,7 @@ textarea {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: url("/WordWeave/images/logo.png") no-repeat center center;
+	background: url("/wordweave/images/logo.png") no-repeat center center;
 	background-size: cover;
 	opacity: 0.1;
 	/* Adjust opacity here */

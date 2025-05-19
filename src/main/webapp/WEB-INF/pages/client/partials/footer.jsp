@@ -5,7 +5,7 @@
 		<div>
 			<div class="left">
 				<div class="logo">
-					<img src="/WordWeave/images/logo.png" class="nav-logo">
+					<img src="/wordweave/images/logo.png" class="nav-logo">
 				</div>
 				<div class="text">
 					<p>
@@ -25,10 +25,10 @@
 			<h2>Useful Links</h2>
 			<nav>
 				<ul>
-					<li><a href="/WordWeave/">Home</a></li>
-					<li><a href="/WordWeave/blogs">Blogs</a></li>
-					<li><a href="/WordWeave/about">About Us</a></li>
-					<li><a href="/WordWeave/contact">Contact Us</a></li>
+					<li><a href="/wordweave/">Home</a></li>
+					<li><a href="/wordweave/blogs">Blogs</a></li>
+					<li><a href="/wordweave/about">About Us</a></li>
+					<li><a href="/wordweave/contact">Contact Us</a></li>
 				</ul>
 			</nav>
 		</div>
@@ -51,6 +51,6 @@
 </footer>
 <script
 	src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="/WordWeave/js/main.js"></script>
+<script src="/wordweave/js/main.js"></script>
 </body>
 </html>

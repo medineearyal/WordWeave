@@ -26,7 +26,7 @@ public class CategoryManagementController extends HttpServlet {
 		String username = (String) request.getAttribute("username");
 		
 		if (username == null && userRole == null) {
-			response.sendRedirect("/WordWeave/login");
+			response.sendRedirect("/wordweave/login");
 			return;
 		}
 
@@ -54,11 +54,11 @@ public class CategoryManagementController extends HttpServlet {
                 categoryService.deleteCategory(categoryId);
                 
                 request.getSession().setAttribute("success", "Category Successfully Deleted.");
-                response.sendRedirect("/WordWeave/admin/categories");
+                response.sendRedirect("/wordweave/admin/categories");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("/WordWeave/admin/categories");
+            response.sendRedirect("/wordweave/admin/categories");
         }
     }
 
@@ -86,12 +86,12 @@ public class CategoryManagementController extends HttpServlet {
                 request.getSession().setAttribute("success", "Category Successfully Updated.");
             }
 
-            response.sendRedirect("/WordWeave/admin/categories");
+            response.sendRedirect("/wordweave/admin/categories");
             
         } catch (Exception e) {
             e.printStackTrace();
             request.getSession().setAttribute("error", "Failed To Create/Edit Cateogry.");
-            response.sendRedirect("/WordWeave/admin/categories");
+            response.sendRedirect("/wordweave/admin/categories");
         }
     }
 }

@@ -68,7 +68,7 @@ public class FavouriteController extends HttpServlet {
 			}
 		} else {
 			request.setAttribute("error", "User is not logged in.");
-			response.sendRedirect("/WordWeave/login");
+			response.sendRedirect("/wordweave/login");
 			return;
 		}
 

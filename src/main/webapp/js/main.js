@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	clickableCards?.forEach(card => {
 		card.addEventListener("click", function() {
 			const blogId = card.getAttribute("data-id");
-			window.open(`/WordWeave/blog/${blogId}`, "_blank");
+			window.open(`/wordweave/blog/${blogId}`, "_blank");
 		})
 	});
 
@@ -43,9 +43,9 @@ document.addEventListener("DOMContentLoaded", function() {
 			const username = icon.getAttribute("data-user");
 
 			if (!username) {
-				window.location.href = "/WordWeave/login";
+				window.location.href = "/wordweave/login";
 			} else {
-				fetch(`/WordWeave/admin/blogs?action=toggle-favorite&username=${username}&blogId=${blogId}`,
+				fetch(`/wordweave/admin/blogs?action=toggle-favorite&username=${username}&blogId=${blogId}`,
 					{
 						'method': 'GET',
 					})
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			}
 		});
 	});
-	
+
 	document.querySelectorAll('.notification').forEach(showNotification);
 
 	getCopyrightDate();
@@ -80,7 +80,7 @@ function getCopyrightDate() {
 	const copyrightSpan = document.querySelector(".copyright-date");
 	const currentYear = new Date().getFullYear();
 	if (copyrightSpan) {
-		copyrightSpan.innerHTML = currentYear;	
+		copyrightSpan.innerHTML = currentYear;
 	}
 }
 
@@ -95,4 +95,17 @@ function showNotification(notificationElement) {
 	setTimeout(() => {
 		notificationElement.classList.remove('show');
 	}, 5000);
+}
+
+function previewImage(event) {
+	const input = event.target;
+	const image = document.getElementById('profileImage');
+
+	if (input.files && input.files[0]) {
+		const reader = new FileReader();
+		reader.onload = function(e) {
+			image.src = e.target.result;
+		}
+		reader.readAsDataURL(input.files[0]);
+	}
 }

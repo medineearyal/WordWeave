@@ -66,7 +66,7 @@ public class RegisterController extends HttpServlet {
                 handleError(request, response, errors);
             } else if (isAdded) {
             	request.getSession().setAttribute("success", "Account Successfully Created, Please Login.");
-                response.sendRedirect("/WordWeave/login");
+                response.sendRedirect("/wordweave/login");
             } else {
                 errors.put("error", "Could not register your account. Please try again later!");
                 handleError(request, response, errors);

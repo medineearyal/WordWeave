@@ -5,7 +5,7 @@
 	<div class="section-container">
 		<h1 class="h1">SEARCH</h1>
 		<div class="search-box" style="margin: 1rem 0">
-			<form method="get">
+			<form method="get" novalidate>
 				<label for="Search"> <input type="text" id="Search"
 					placeholder="travel" name="query">
 					<button type="button" onclick="clearSearchInput()" class="btn-reset">

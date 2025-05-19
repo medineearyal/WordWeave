@@ -8,7 +8,7 @@
 
 	<div style="display: flex; justify-content: space-between; align-items: center;">
 		<h2>Users</h2>
-		<a href="/WordWeave/admin/users?action=create"
+		<a href="/wordweave/admin/users?action=create"
 			style="background-color: #4d1f26; color: white; padding: 10px 15px; border-radius: 8px; text-decoration: none; font-weight: bold;">
 			+ Create User </a>
 	</div>
@@ -39,11 +39,11 @@
 						</c:forEach>
 					</td>
 					<td>
-						<a href="/WordWeave/admin/users?action=edit&id=${user.user_id}"
+						<a href="/wordweave/admin/users?action=edit&id=${user.user_id}"
 							style="margin-right: 10px;">
 							<i class="fas fa-edit" style="color: #4d1f26;"></i>
 						</a>
-						<a href="/WordWeave/admin/users?action=delete&id=${user.user_id}"
+						<a href="/wordweave/admin/users?action=delete&id=${user.user_id}"
 							onclick="return confirm('Are you sure you want to delete this user?')">
 							<i class="fas fa-trash-alt" style="color: red;"></i>
 						</a>

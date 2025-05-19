@@ -4,24 +4,34 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ include file="partials/header.jsp" %>
 
-<div class="main-content">
+<div class="main-content container">
     <%@ include file="partials/user_nav.jsp" %>
 
-    <h2>${actionText} Category</h2>
+    <h2 class="form-heading">${actionText} Category</h2>
 
-    <form action="" method="post" class="login-form">
+    <form method="post" class="user-form" novalidate>
         <input type="hidden" name="action" value="${actionText == 'Edit' ? 'edit' : 'create'}">
 
         <c:if test="${actionText == 'Edit'}">
             <input type="hidden" name="id" value="${category.category_id}">
         </c:if>
 
-        <label for="name">
-            <i class="fas fa-tag"></i>
-            <input type="text" id="name" name="name" value="${category.name}" placeholder="Category Name" required>
-        </label>
+        <div class="form-group">
+            <label for="name">Category Name</label>
+            <div class="input-wrapper">
+                <i class="fas fa-tag"></i>
+                <input type="text" id="name" name="name"
+                       value="${category.name}" placeholder="Category Name" required>
+            </div>
+            <c:if test="${not empty nameError}">
+                <span class="form-error">${nameError}</span>
+            </c:if>
+        </div>
 
-        <button type="submit">${actionText} Category</button>
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">${actionText} Category</button>
+        </div>
     </form>
 </div>
+
 <%@ include file="partials/footer.jsp"%>
