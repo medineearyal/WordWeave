@@ -25,7 +25,7 @@
             </c:otherwise>
         </c:choose>
 
-        <a href="/WordWeave" class="back-link">Go to Home</a>
+        <a href="/wordweave" class="back-link">Go to Home</a>
     </div>
 
 <%@ include file="../client/partials/footer.jsp" %>

@@ -4,6 +4,25 @@
 
 <%@ include file="partials/header.jsp"%>
 <section class="section-container">
+	<div class="breadcrumb-container">
+		<hr class="divider">
+
+		<div class="breadcrumb">
+		    <a href="${pageContext.request.contextPath}/">
+		        <i class="fas fa-home"></i> Home
+		    </a>
+		    <i class="fas fa-angle-right separator"></i>
+		
+		    <a href="${pageContext.request.contextPath}/blogs">
+		        <i class="fas fa-blog"></i> Blogs
+		    </a>
+		    <i class="fas fa-angle-right separator"></i>
+		
+		    <span><i class="fas fa-file-alt"></i> ${blog.title}</span>
+		</div>
+		
+		<hr class="divider">
+	</div>
 	<h1 class="h1">${blog.title}</h1>
 	<div class="" style="padding: 0;">
 		<div class="blog">

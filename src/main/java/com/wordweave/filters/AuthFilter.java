@@ -63,14 +63,20 @@ public class AuthFilter extends HttpFilter implements Filter {
 		String servletPath = req.getServletPath();
 		req.setAttribute("servletPath", servletPath);
 		
-		Map<String, String> staticTitles = Map.of(
-			    "/", "Home",
-			    "/login", "Login",
-			    "/register", "Register",
-			    "/blogs", "Blogs",
-			    "/about", "About Us",
-			    "/contact", "Contact Us",
-			    "/search", "Search"
+		Map<String, String> staticTitles = Map.ofEntries(
+			    Map.entry("/", "Home"),
+			    Map.entry("/login", "Login"),
+			    Map.entry("/register", "Register"),
+			    Map.entry("/blogs", "Blogs"),
+			    Map.entry("/about", "About Us"),
+			    Map.entry("/contact", "Contact Us"),
+			    Map.entry("/search", "Search"),
+			    
+			    Map.entry("/admin/dashboard", "Dashboard"),
+			    Map.entry("/admin/users", "Users"),
+			    Map.entry("/admin/blogs", "Blogs"),
+			    Map.entry("/admin/categories", "Categories"),
+			    Map.entry("/admin/accounts", "Profile")
 			);
 
 			String pathInfo = req.getPathInfo();

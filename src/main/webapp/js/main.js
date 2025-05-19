@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	clickableCards?.forEach(card => {
 		card.addEventListener("click", function() {
 			const blogId = card.getAttribute("data-id");
-			window.open(`/wordweave/blog/${blogId}`, "_blank");
+			window.location.href = `/wordweave/blog/${blogId}`;
 		})
 	});
 
