@@ -74,7 +74,7 @@ public class UserManagementController extends HttpServlet {
 				e.printStackTrace();
 			}
 			
-			String fromLocation = request.getParameter("from") == null ? request.getParameter("from") : "";
+			String fromLocation = request.getParameter("from") != null ? request.getParameter("from") : "";
 			System.out.println(fromLocation);
 			if (fromLocation.equals("accounts")) {
 				response.sendRedirect("/wordweave/admin/accounts");

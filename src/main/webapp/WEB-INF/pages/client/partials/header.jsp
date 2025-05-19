@@ -35,7 +35,7 @@
 <body>
 	<header>
 		<nav>
-			<a href="/WordWeave"> <img src="/wordweave/images/logo.png"
+			<a href="/wordweave"> <img src="/wordweave/images/logo.png"
 				class="nav-logo">
 			</a>
 

@@ -13,6 +13,15 @@
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="/wordweave/css/admin/admin.css" />
+
+<link rel="icon" type="image/png" href="/wordweave/images/favicon/favicon-96x96.png"
+	sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/wordweave/images/favicon/favicon.svg" />
+<link rel="shortcut icon" href="/wordweave/images/favicon/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180"
+	href="/wordweave/images/favicon/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="Word Weave" />
+<link rel="manifest" href="/wordweave/images/favicon/site.webmanifest" />
 </head>
 
 <body>
