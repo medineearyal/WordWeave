@@ -419,6 +419,7 @@ select::after {
 
 .form-group {
 	margin-bottom: 18px;
+	color: black;
 }
 
 .form-group label {
