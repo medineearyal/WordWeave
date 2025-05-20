@@ -62,10 +62,11 @@ public class UserManagementController extends HttpServlet {
 			
 			request.getRequestDispatcher("/WEB-INF/pages/admin/userList.jsp").forward(request, response);
 		} else if (action.equals("edit")) {
+			int userId = Integer.parseInt(request.getParameter("id"));
+			String actionText = "Edit";
+			UserModel user;
 			try {
-				int userId = Integer.parseInt(request.getParameter("id"));
-				String actionText = "Edit";
-				UserModel user = userService.getUserById(userId);
+				user = userService.getUserById(userId);
 				user.setPassword("");
 				request.setAttribute("editUser", user);
 				request.setAttribute("actionText", actionText);
@@ -74,14 +75,6 @@ public class UserManagementController extends HttpServlet {
 				e.printStackTrace();
 			}
 			
-			String fromLocation = request.getParameter("from") != null ? request.getParameter("from") : "";
-			System.out.println(fromLocation);
-			if (fromLocation.equals("accounts")) {
-				response.sendRedirect("/wordweave/admin/accounts");
-				return;
-			}
-			
-
 			request.getRequestDispatcher("/WEB-INF/pages/admin/userForm.jsp").forward(request, response);
 
 		} else if (action.equals("delete")) {
@@ -120,9 +113,12 @@ public class UserManagementController extends HttpServlet {
 						request.setAttribute(entry.getKey(), entry.getValue());
 					}
 					request.setAttribute("userModel", userModel);
-					doGet(request, response);
+					request.setAttribute("actionText", "Create");
+					request.setAttribute("roles", this.roles);
+					request.getRequestDispatcher("/WEB-INF/pages/admin/userForm.jsp").forward(request, response);
 					return;
 				}
+
 
 				Boolean isAdded = userService.registerUser(userModel);
 				if (isAdded) {
@@ -137,6 +133,9 @@ public class UserManagementController extends HttpServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 				request.setAttribute("error", "An error occurred.");
+				request.getSession().setAttribute("error", "Failed to create user.");
+				request.getSession().setAttribute("actionText", action);
+				request.setAttribute("roles", this.roles);
 				request.getRequestDispatcher("/WEB-INF/pages/admin/userForm.jsp").forward(request, response);
 				return;
 			}
@@ -163,13 +162,23 @@ public class UserManagementController extends HttpServlet {
 
 				if (!errors.isEmpty()) {
 					for (Map.Entry<String, String> entry : errors.entrySet()) {
-						request.setAttribute(entry.getKey() + "Error", entry.getValue());
+						request.setAttribute(entry.getKey(), entry.getValue());
 					}
-					request.setAttribute("user", userModel);
+					request.setAttribute("editUser", userModel);
+					request.setAttribute("roles", this.roles);
 					request.setAttribute("actionText", "Edit");
-					doGet(request, response);
+					
+					String fromLocation = request.getParameter("from") != null ? request.getParameter("from") : "";
+					if (fromLocation.equals("accounts")) {
+						request.setAttribute("actionText", "Update");
+						String userRole = (String) request.getAttribute("role");
+						RoleModel roleObject = roleService.getRole(userRole);
+						request.setAttribute("roleObject", roleObject);
+					}
+					request.getRequestDispatcher("/WEB-INF/pages/admin/userForm.jsp").forward(request, response);
 					return;
 				}
+
 
 				Boolean isUpdated = userService.updateUser(userModel);
 				if (isUpdated) {
@@ -179,60 +188,94 @@ public class UserManagementController extends HttpServlet {
 					request.setAttribute("error", "Failed to update user.");
 					request.getSession().setAttribute("error", "Failed to update user.");
 				}
-				request.setAttribute("user", userModel);
+				request.setAttribute("editUser", userModel);
 				request.setAttribute("actionText", "Edit");
-				doGet(request, response);
+				request.setAttribute("roles", this.roles);
+				request.getRequestDispatcher("/WEB-INF/pages/admin/userForm.jsp").forward(request, response);
 				return;
 			} catch (Exception e) {
 				e.printStackTrace();
 				request.setAttribute("error", "An error occurred while updating the user.");
+				request.getSession().setAttribute("actionText", action);
 				request.getRequestDispatcher("/WEB-INF/pages/admin/userForm.jsp").forward(request, response);
 				return;
 			}
 		}
 	}
 
-	private UserModel extractUserModel(HttpServletRequest req) throws Exception {
-		String fullname = FormUtils.getFormField(req, "fullname");
-		String email = FormUtils.getFormField(req, "email");
-		String username = FormUtils.getFormField(req, "username");
-		String password = FormUtils.getFormField(req, "password");
-		int roleId = Integer.parseInt(req.getParameter("role_id"));
-		
+	private UserModel extractUserModel(HttpServletRequest req) {
+		String fullname = "";
+		String email = "";
+		String username = "";
+		String password = "";
+
+		try {
+			fullname = FormUtils.getFormField(req, "fullname");
+			email = FormUtils.getFormField(req, "email");
+			username = FormUtils.getFormField(req, "username");
+			password = FormUtils.getFormField(req, "password");
+		} catch (IOException | ServletException e) {
+			e.printStackTrace();
+		}
+
+		String roleIdParam = req.getParameter("role_id");
+		int roleId = -1;
+		if (roleIdParam != null && !roleIdParam.trim().isEmpty()) {
+			try {
+				roleId = Integer.parseInt(roleIdParam);
+			} catch (NumberFormatException e) {
+			}
+		}
 
 		String profilePicture = null;
-
-		boolean isImageUploaded = imageUtil.uploadImage(req, "profile_picture");
-		if (isImageUploaded) {
-			profilePicture = "/images/" + req.getPart("profile_picture").getSubmittedFileName();
-		}else {
-			profilePicture = FormUtils.getFormField(req, "existing_profile_picture");
+		try {
+			boolean isImageUploaded = imageUtil.uploadImage(req, "profile_picture");
+			if (isImageUploaded) {
+				profilePicture = "/images/" + req.getPart("profile_picture").getSubmittedFileName();
+			} else {
+				profilePicture = FormUtils.getFormField(req, "existing_profile_picture");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		return new UserModel(fullname, email, username, password, roleId, profilePicture);
 	}
 
+
 	private HashMap<String, String> validateUser(UserModel userModel, boolean isCreate) {
 		HashMap<String, String> errors = new HashMap<>();
 
-		if (ValidationUtil.isNullOrEmpty(userModel.getUsername())
-				|| !ValidationUtil.isAlphanumericStartingWithLetter(userModel.getUsername())) {
-			errors.put("usernameError", "Invalid username.");
+		if (ValidationUtil.isNullOrEmpty(userModel.getFullname())) {
+			errors.put("fullnameError", "Full name cannot be empty.");
 		}
 
-		if (!ValidationUtil.isValidEmail(userModel.getEmail())) {
-			errors.put("emailError", "Invalid email.");
+		if (ValidationUtil.isNullOrEmpty(userModel.getUsername())) {
+			errors.put("usernameError", "Username cannot be empty.");
+		} else if (!ValidationUtil.isAlphanumericStartingWithLetter(userModel.getUsername())) {
+			errors.put("usernameError", "Invalid username format.");
 		}
-			
-	
+
+		if (ValidationUtil.isNullOrEmpty(userModel.getEmail())) {
+			errors.put("emailError", "Email cannot be empty.");
+		} else if (!ValidationUtil.isValidEmail(userModel.getEmail())) {
+			errors.put("emailError", "Invalid email format.");
+		}
+
+		if (userModel.getRole_id() <= 0) {
+			errors.put("roleError", "Please select a valid role.");
+		}
+
 		if (isCreate) {
+			if (ValidationUtil.isNullOrEmpty(userModel.getPassword())) {
+				errors.put("passwordError", "Password cannot be empty.");
+			} else if (!ValidationUtil.isValidPassword(userModel.getPassword())) {
+				errors.put("passwordError", "Password must meet minimum requirements.");
+			}
+
 			UserModel existingUser = userService.getUserByUsername(userModel.getUsername());
 			if (existingUser != null) {
 				errors.put("usernameError", "The user with this username already exists.");
-			}
-			
-			if (!ValidationUtil.isValidPassword(userModel.getPassword())) {
-				errors.put("passwordError", "Invalid password.");
 			}
 		}
 

@@ -17,7 +17,7 @@
         </c:if>
 
         <div class="form-group">
-            <label for="name">Category Name</label>
+            <label for="name">Category Name <span style="color: red;">*</span></label>
             <div class="input-wrapper">
                 <i class="fas fa-tag"></i>
                 <input type="text" id="name" name="name"

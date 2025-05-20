@@ -174,10 +174,8 @@ public class BlogManagementController extends HttpServlet {
 		        int blogId = Integer.parseInt(request.getParameter("blogId"));
 		        username = request.getParameter("username");
 		        
-		        // Retrieve user ID from username
 		        UserModel user = userService.getUserByUsername(username);
 		        
-		        // Check if the blog is already marked as a favorite
 		        boolean isFavorite = blogService.isBlogFavorite(user.getUser_id(), blogId);
 		        
 		        System.out.println(isFavorite);
@@ -230,18 +228,16 @@ public class BlogManagementController extends HttpServlet {
 		        int blogId = Integer.parseInt(request.getParameter("id"));  // Get the blog ID from the request
 		        BlogModel blog = blogService.getBlogById(blogId);  // Retrieve the blog from the database
 		        Timestamp updatedAt = new Timestamp(System.currentTimeMillis());  // Get the current timestamp for the update
-		        
-		        // Toggle the draft status	        
+		               
 		        if (blog.getIsDraft() == null || blog.getIsDraft() == true) {
-		            blog.setIsDraft(false);  // Set to published
+		            blog.setIsDraft(false);  
 		        } else {
-		            blog.setIsDraft(true);  // Set to draft
+		            blog.setIsDraft(true);  
 		        }
 		        
 
-		        blog.setUpdatedAt(updatedAt);  // Update the `updatedAt` timestamp
+		        blog.setUpdatedAt(updatedAt);
 
-		        // Update the blog in the database
 		        boolean isUpdated = blogService.updateBlogStatus(blog);  // Assuming `updateBlog` updates the draft status too
 		        
 		        if (isUpdated) {
@@ -266,81 +262,86 @@ public class BlogManagementController extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	        throws ServletException, IOException {
 
-		String action = request.getParameter("action");
+	    String action = request.getParameter("action");
 
-		String content = request.getParameter("content");
-		String title = request.getParameter("title");
-		int authorId = Integer.parseInt(request.getParameter("author_id"));
-		Date publishDate = Date.valueOf(request.getParameter("publish_date")); // format: YYYY-MM-DD
+	    String content = request.getParameter("content");
+	    String title = request.getParameter("title");
 
-		// Handle image upload
-		String imagePath = null;
-		try {
-			ImageUtil imageUtil = new ImageUtil();
-			boolean isImageUploaded = imageUtil.uploadImage(request, "image");
-			if (isImageUploaded) {
-				imagePath = "/images/" + request.getPart("image").getSubmittedFileName();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	    if (title == null || title.trim().isEmpty() || content == null || content.trim().isEmpty()) {
+	        request.getSession().setAttribute("error", "Title and Content cannot be empty.");
+	        response.sendRedirect("/wordweave/admin/blogs?action=" + action);
+	        return;
+	    }
 
-		if (action.equals("create")) {
-			BlogModel blog = new BlogModel(imagePath, content, title, authorId, publishDate);
-			int blogId = blogService.createBlog(blog);
-			blog.setBlogId(blogId);
+	    int authorId = Integer.parseInt(request.getParameter("author_id"));
+	    Date publishDate;
+	    try {
+	        publishDate = Date.valueOf(request.getParameter("publish_date"));
+	    } catch (Exception e) {
+	        publishDate = new Date(System.currentTimeMillis());
+	    }
 
-			String[] selectedCategories = request.getParameterValues("categories");
+	    String imagePath = null;
+	    try {
+	        ImageUtil imageUtil = new ImageUtil();
+	        boolean isImageUploaded = imageUtil.uploadImage(request, "image");
+	        if (isImageUploaded) {
+	            imagePath = "/images/" + request.getPart("image").getSubmittedFileName();
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 
-			if (selectedCategories != null) {
-		        for (String categoryId : selectedCategories) {
-		            try {
-						blogService.addCategoryToBlog(blog.getBlogId(), Integer.parseInt(categoryId));
-					} catch (NumberFormatException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						request.getSession().setAttribute("error", "Blog Faild to Create");
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						request.getSession().setAttribute("error", "Blog Faild to Create");
-					}
-		        }
-		    }
-			request.getSession().setAttribute("success", "Blog Successfully Created");
-			response.sendRedirect("/wordweave/admin/blogs");
-		} else if (action.equals("edit")) {
-			int blogId = Integer.parseInt(request.getParameter("id"));
-		    Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
+	    if ("create".equals(action)) {
+	        BlogModel blog = new BlogModel(imagePath, content, title, authorId, publishDate);
+	        int blogId = blogService.createBlog(blog);
+	        blog.setBlogId(blogId);
 
-		    BlogModel blog = new BlogModel(blogId, imagePath, content, title, updatedAt, authorId, publishDate);
-		    blogService.updateBlog(blog);
+	        String[] selectedCategories = request.getParameterValues("categories");
 
-		    // First, remove all existing category mappings for this blog
-		    try {
-		        blogService.clearCategoriesFromBlog(blogId);
-		    } catch (SQLException e) {
-		        e.printStackTrace();
-		    }
+	        if (selectedCategories != null) {
+	            for (String categoryId : selectedCategories) {
+	                try {
+	                    blogService.addCategoryToBlog(blog.getBlogId(), Integer.parseInt(categoryId));
+	                } catch (NumberFormatException | SQLException e) {
+	                    e.printStackTrace();
+	                    request.getSession().setAttribute("error", "Failed to assign categories.");
+	                }
+	            }
+	        }
 
-		    // Then, add the new selected categories
-		    String[] selectedCategories = request.getParameterValues("categories");
-		    if (selectedCategories != null) {
-		        for (String categoryId : selectedCategories) {
-		            try {
-		                blogService.addCategoryToBlog(blogId, Integer.parseInt(categoryId));
-		            } catch (Exception e) {
-		                e.printStackTrace();
-		                request.getSession().setAttribute("error", "Category Faild to Fetch");
-		            }
-		        }
-		    }
-		    
-		    request.getSession().setAttribute("success", "Blog Successfully Edited");
-		    response.sendRedirect("/wordweave/admin/blogs");
+	        request.getSession().setAttribute("success", "Blog Successfully Created");
+	        response.sendRedirect("/wordweave/admin/blogs");
 
-		}
+	    } else if ("edit".equals(action)) {
+	        int blogId = Integer.parseInt(request.getParameter("id"));
+	        Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
+
+	        BlogModel blog = new BlogModel(blogId, imagePath, content, title, updatedAt, authorId, publishDate);
+	        blogService.updateBlog(blog);
+
+	        try {
+	            blogService.clearCategoriesFromBlog(blogId);
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+
+	        String[] selectedCategories = request.getParameterValues("categories");
+	        if (selectedCategories != null) {
+	            for (String categoryId : selectedCategories) {
+	                try {
+	                    blogService.addCategoryToBlog(blogId, Integer.parseInt(categoryId));
+	                } catch (Exception e) {
+	                    e.printStackTrace();
+	                    request.getSession().setAttribute("error", "Failed to assign categories.");
+	                }
+	            }
+	        }
+
+	        request.getSession().setAttribute("success", "Blog Successfully Edited");
+	        response.sendRedirect("/wordweave/admin/blogs");
+	    }
 	}
 }

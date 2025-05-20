@@ -16,7 +16,7 @@
 		</c:if>
 
 		<div class="form-group">
-			<label for="title">Title</label>
+			<label for="title">Title <span style="color: red;">*</span></label>
 			<div class="input-wrapper">
 				<i class="fas fa-heading"></i>
 				<input type="text" id="title" name="title" value="${blog.title}" placeholder="Blog Title" required>
@@ -24,7 +24,7 @@
 		</div>
 
 		<div class="form-group">
-			<label for="content">Content</label>
+			<label for="content">Content <span style="color: red;">*</span></label>
 			<div class="input-wrapper textarea-wrapper">
 				<i class="fas fa-align-left"></i>
 				<textarea id="content" name="content" rows="6" placeholder="Blog Content" required>${blog.content}</textarea>

@@ -19,7 +19,7 @@
 		</c:if>
 
 		<div class="form-group">
-			<label for="fullname">Full Name</label>
+			<label for="fullname">Full Name <span style="color: red;">*</span></label>
 			<div class="input-wrapper">
 				<i class="fas fa-user"></i>
 				<input type="text" id="fullname" name="fullname"
@@ -31,7 +31,7 @@
 		</div>
 
 		<div class="form-group">
-			<label for="username">Username</label>
+			<label for="username">Username <span style="color: red;">*</span></label>
 			<div class="input-wrapper">
 				<i class="fas fa-user-tag"></i>
 				<input type="text" id="username" name="username"
@@ -43,7 +43,7 @@
 		</div>
 
 		<div class="form-group">
-			<label for="email">Email</label>
+			<label for="email">Email <span style="color: red;">*</span></label>
 			<div class="input-wrapper">
 				<i class="fas fa-envelope"></i>
 				<input type="email" id="email" name="email"
@@ -83,7 +83,7 @@
 
 		<c:if test="${actionText == 'Create' or actionText == 'Update'}">
 			<div class="form-group">
-				<label for="password">Password</label>
+				<label for="password">Password <span style="color: red;">*</span></label>
 				<div class="input-wrapper">
 					<i class="fas fa-lock"></i>
 					<input type="password" id="password" name="password" placeholder="Password" required>
@@ -97,7 +97,7 @@
 		<c:choose>
 			<c:when test="${actionText != 'Update'}">
 				<div class="form-group">
-					<label for="role_id">Role</label>
+					<label for="role_id">Role <span style="color: red;">*</span></label>
 					<div class="input-wrapper">
 						<i class="fas fa-user-shield"></i>
 						<select name="role_id" id="role_id" required>

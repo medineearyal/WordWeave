@@ -69,12 +69,18 @@ public class CategoryManagementController extends HttpServlet {
         String action = request.getParameter("action");
         String name = request.getParameter("name");
 
+        if (name == null || name.trim().isEmpty()) {
+            request.getSession().setAttribute("error", "Category name cannot be empty.");
+            response.sendRedirect("/wordweave/admin/categories?action=" + action);
+            return;
+        }
+
         try {
             if ("create".equals(action)) {
                 CategoryModel category = new CategoryModel();
                 category.setName(name);
                 categoryService.createCategory(category);
-                
+
                 request.getSession().setAttribute("success", "Category Successfully Created.");
             } else if ("edit".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
@@ -82,15 +88,15 @@ public class CategoryManagementController extends HttpServlet {
                 category.setCategory_id(id);
                 category.setName(name);
                 categoryService.updateCategory(category);
-                
+
                 request.getSession().setAttribute("success", "Category Successfully Updated.");
             }
 
             response.sendRedirect("/wordweave/admin/categories");
-            
+
         } catch (Exception e) {
             e.printStackTrace();
-            request.getSession().setAttribute("error", "Failed To Create/Edit Cateogry.");
+            request.getSession().setAttribute("error", "Failed To Create/Edit Category.");
             response.sendRedirect("/wordweave/admin/categories");
         }
     }

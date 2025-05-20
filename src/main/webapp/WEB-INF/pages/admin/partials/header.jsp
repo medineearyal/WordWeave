@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 	
 <!DOCTYPE html>
 <html lang="en">
@@ -26,30 +27,62 @@
 
 <body>
 	<div class="sidebar">
-		<div class="logo-section">
-			<a href="/wordweave/">
-				<img src="/wordweave/images/logo.png" alt="Logo"> <span>WORDWEAVE</span>
-			</a>
-		</div>
-		<ul class="menu">
-			<li><a href="/wordweave/admin/dashboard">Dashboard</a></li>
-			
-			<c:if test="${role != null and role.toLowerCase().equals('admin')}">
-				<li><a href="/wordweave/admin/users">Users</a></li>
-			</c:if>
-
-			<li><a href="/wordweave/admin/blogs">Blogs</a></li>
-			<li><a href="/wordweave/admin/categories">Categories</a></li>
-			
-			<c:if test="${role != null and role.toLowerCase().equals('user')}">
-				<li><a href="/wordweave/admin/contacts">Contacts</a></li>
-			</c:if>
-			
-		</ul>
-		<ul class="others">
-			<li><a href="/wordweave/admin/accounts">Accounts</a></li>
-		</ul>
+    <div class="logo-section">
+        <a href="/wordweave/">
+            <img src="/wordweave/images/logo.png" alt="Logo"> <span>WORDWEAVE</span>
+        </a>
+    </div>
+	    <ul class="menu">
+	        <li>
+	            <a href="/wordweave/admin/dashboard"
+	               class="${servletPath == '/admin/dashboard' ? 'active' : ''}">
+	                Dashboard
+	            </a>
+	        </li>
+	
+	        <c:if test="${role != null and fn:toLowerCase(role) == 'admin'}">
+	            <li>
+	                <a href="/wordweave/admin/users"
+	                   class="${servletPath == '/admin/users' ? 'active' : ''}">
+	                    Users
+	                </a>
+	            </li>
+	        </c:if>
+	
+	        <li>
+	            <a href="/wordweave/admin/blogs"
+	               class="${servletPath == '/admin/blogs' ? 'active' : ''}">
+	                Blogs
+	            </a>
+	        </li>
+	
+	        <li>
+	            <a href="/wordweave/admin/categories"
+	               class="${servletPath == '/admin/categories' ? 'active' : ''}">
+	                Categories
+	            </a>
+	        </li>
+	
+	        <c:if test="${role != null and fn:toLowerCase(role) == 'user'}">
+	            <li>
+	                <a href="/wordweave/admin/contacts"
+	                   class="${servletPath == '/admin/contacts' ? 'active' : ''}">
+	                    Contacts
+	                </a>
+	            </li>
+	        </c:if>
+	    </ul>
+	
+	    <ul class="others">
+	        <li>
+	            <a href="/wordweave/admin/accounts"
+	               class="${servletPath == '/admin/accounts' ? 'active' : ''}">
+	                Accounts
+	            </a>
+	        </li>
+	    </ul>
 	</div>
+	
 	<div class="message-status">
 		<%
 		String successMessage = (String) request.getAttribute("success");
