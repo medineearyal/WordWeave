@@ -87,7 +87,9 @@ a {
 	padding: 0;
 }
 
-.menu li:hover, .others li:hover {
+.active,
+.menu li:hover, 
+.others li:hover {
 	background-color: #fae4eb;
 }
 
