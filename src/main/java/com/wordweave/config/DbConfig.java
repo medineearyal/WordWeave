@@ -4,9 +4,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * DbConfig handles the configuration and connection setup for the MySQL database.
+ */
 public class DbConfig {
-
-	// Database configuration information
 	private static final String DB_NAME = "wordweave";
 	private static final String URL = "jdbc:mysql://localhost:3306/" + DB_NAME;
 	private static final String USERNAME = "root";
