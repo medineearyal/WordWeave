@@ -78,7 +78,7 @@ public class ValidationUtil {
      * - At least 8 characters long
      * - Contains at least one uppercase letter
      * - Contains at least one digit
-     * - Contains at least one special character (@$!%*?&)
+     * - Contains at least one special character
      * 
      * @param password The password to validate
      * @return true if the password meets all requirements, false otherwise

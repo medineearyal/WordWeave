@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.wordweave.config"},{"l":"com.wordweave.controllers"},{"l":"com.wordweave.controllers.admin"},{"l":"com.wordweave.filters"},{"l":"com.wordweave.models"},{"l":"com.wordweave.services"},{"l":"com.wordweave.utils"}];updateSearchResults();
