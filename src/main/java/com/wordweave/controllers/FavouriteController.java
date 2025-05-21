@@ -17,7 +17,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 /**
- * Servlet implementation class FavouriteController
+ * FavouriteController handles requests to the "/favourites" route.
+ * It retrieves and displays all blogs that the currently logged-in user has marked as favorites.
  */
 @WebServlet(asyncSupported = true, urlPatterns = { "/favourites" })
 public class FavouriteController extends HttpServlet {
@@ -33,8 +34,13 @@ public class FavouriteController extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	 * Handles GET requests to /favourites.
+	 * Retrieves the list of favorite blogs for the currently logged-in user and forwards them to the favourites.jsp page.
+	 *
+	 * @param request  HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @throws ServletException
+	 * @throws IOException
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)

@@ -22,7 +22,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class RegisterController
+ * RegisterController handles user registration requests.
+ * It validates form input, processes uploaded profile pictures, hashes passwords,
+ * and persists new users into the database.
  */
 @MultipartConfig
 @WebServlet(asyncSupported = true, urlPatterns = { "/register" })
@@ -35,7 +37,11 @@ public class RegisterController extends HttpServlet {
     public RegisterController() {
         super();
     }
-
+    
+    /**
+	 * Handles GET requests to show the registration form.
+	 * If user is already logged in, redirects to home.
+	 */
     @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	String username = (String) request.getAttribute("username");
@@ -79,6 +85,9 @@ public class RegisterController extends HttpServlet {
         }
     }
 
+    /**
+	 * Validates the registration form inputs and returns a map of error messages.
+	 */
     private Map<String, String> validateRegistrationForm(HttpServletRequest req) {
         Map<String, String> errors = new HashMap<>();
 
@@ -125,6 +134,9 @@ public class RegisterController extends HttpServlet {
     }
 
 
+    /**
+	 * Extracts and builds a UserModel from request parameters and uploaded image.
+	 */
     private UserModel extractUserModel(HttpServletRequest req) throws Exception {
         String fullname = FormUtils.getFormField(req, "fullname");
         String email = FormUtils.getFormField(req, "email");
@@ -145,6 +157,9 @@ public class RegisterController extends HttpServlet {
         return new UserModel(fullname, email, username, password, roleId, profilePicture);
     }
 
+    /**
+	 * Handles forwarding back to the registration page with error messages and prefilled inputs.
+	 */
     private void handleError(HttpServletRequest req, HttpServletResponse resp, Map<String, String> errors)
             throws ServletException, IOException {
         

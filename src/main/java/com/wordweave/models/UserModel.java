@@ -2,6 +2,10 @@ package com.wordweave.models;
 
 import java.sql.Date;
 
+/**
+ * Represents a user in the system.
+ * Contains personal info, credentials, role, profile details, and account status.
+ */
 public class UserModel {
 	private int user_id;
 	private String fullname;
@@ -33,11 +37,26 @@ public class UserModel {
 	public UserModel() {
 	}
 
+	/**
+     * Constructor with username and password for login.
+     * @param username the username
+     * @param password the password
+    */
 	public UserModel(String username, String password) {
 		this.username = username;
 		this.password = password;
 	}
 
+	/**
+     * Constructor with full user details including user ID.
+     * @param user_id unique user ID
+     * @param fullname full name of the user
+     * @param email user's email address
+     * @param username username for login
+     * @param role_id role ID assigned to the user
+     * @param password password for login
+     * @param profile_picture profile picture path or URL
+     */
 	public UserModel(int user_id, String fullname, String email, String username, int role_id, String password, String profile_picture) {
 		super();
 		this.user_id = user_id;
@@ -49,6 +68,15 @@ public class UserModel {
 		this.profile_picture = profile_picture;
 	}
 
+	/**
+     * Constructor with user details (without user ID, for new users).
+     * @param fullname full name of the user
+     * @param email user's email address
+     * @param username username for login
+     * @param password password for login
+     * @param role_id role ID assigned to the user
+     * @param profile_picture profile picture path or URL
+     */
 	public UserModel(String fullname, String email, String username, String password, int role_id, String profile_picture) {
 		super();
 		this.fullname = fullname;

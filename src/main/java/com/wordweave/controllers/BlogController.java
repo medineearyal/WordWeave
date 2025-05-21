@@ -16,7 +16,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class BlogController
+ * Controller that handles requests to the "/blogs" URL.
+ * It retrieves all blogs and the most viewed blogs,
+ * and optionally fetches the user's favorite blogs if logged in.
  */
 @WebServlet(asyncSupported = true, urlPatterns = { "/blogs" })
 public class BlogController extends HttpServlet {

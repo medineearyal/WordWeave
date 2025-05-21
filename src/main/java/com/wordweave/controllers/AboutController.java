@@ -10,7 +10,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class AboutController
+ * Controller that handles requests to the "/about" URL.
+ * It simply forwards the request to the About JSP page.
  */
 @WebServlet(asyncSupported = true, urlPatterns = { "/about" })
 public class AboutController extends HttpServlet {

@@ -18,7 +18,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class LoginController
+ * LoginController handles the user login process.
+ * It serves the login page on GET requests and processes authentication on POST requests.
  */
 @WebServlet(asyncSupported = true, urlPatterns = { "/login" })
 public class LoginController extends HttpServlet {
@@ -42,7 +43,15 @@ public class LoginController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/pages/client/login.jsp");
+		String username = (String) request.getAttribute("username");
+		RequestDispatcher dispatcher;
+		
+		if (username != null) {
+			dispatcher = request.getRequestDispatcher("/WEB-INF/pages/admin/dashboard.jsp");
+		}else {
+			dispatcher = request.getRequestDispatcher("/WEB-INF/pages/client/login.jsp");
+		}
+		
 		dispatcher.forward(request, response);
 	}
 
@@ -89,6 +98,12 @@ public class LoginController extends HttpServlet {
 	    }
 	}
 
+	/**
+	 * Validates the login form inputs.
+	 *
+	 * @param req the HTTP request
+	 * @return a map of field-specific error messages
+	 */
 	private Map<String, String> validateLoginForm(HttpServletRequest req) {
 	    Map<String, String> errors = new HashMap<>();
 
@@ -106,6 +121,15 @@ public class LoginController extends HttpServlet {
 	    return errors;
 	}
 
+	/**
+	 * Handles login failure by setting error messages and reloading the login page.
+	 *
+	 * @param req    the HTTP request
+	 * @param resp   the HTTP response
+	 * @param errors a map of error messages to display
+	 * @throws ServletException
+	 * @throws IOException
+	 */
 	private void handleLoginFailure(HttpServletRequest req, HttpServletResponse resp, Map<String, String> errors)
 	        throws ServletException, IOException {
 

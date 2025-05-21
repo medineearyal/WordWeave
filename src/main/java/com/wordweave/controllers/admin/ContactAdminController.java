@@ -14,7 +14,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class ContactAdminController
+ * Servlet for managing contacts in the admin panel.
+ * Supports listing contacts for the logged-in user and viewing details.
  */
 @WebServlet("/admin/contacts")
 public class ContactAdminController extends HttpServlet {

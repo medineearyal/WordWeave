@@ -10,7 +10,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class ErrorHandler
+ * It processes unhandled exceptions or HTTP errors.
+ * Mapped to /error and forwards the error information to a user-friendly error page.
  */
 @WebServlet("/error")
 public class ErrorHandler extends HttpServlet {
@@ -24,8 +25,14 @@ public class ErrorHandler extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+    /**
+	 * Handles GET requests to /error.
+	 * Gathers error information from the request attributes and forwards to error.jsp.
+	 *
+	 * @param request  HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @throws ServletException
+	 * @throws IOException
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub

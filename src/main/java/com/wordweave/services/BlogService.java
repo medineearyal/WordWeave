@@ -14,6 +14,7 @@ import java.util.Set;
 import com.wordweave.config.DbConfig;
 import com.wordweave.models.BlogModel;
 import com.wordweave.models.CategoryModel;
+import com.wordweave.models.FavoriteBlogModel;
 
 public class BlogService {
 	private Connection dbConn;
@@ -29,6 +30,11 @@ public class BlogService {
 		}
 	}
 
+	/**
+	 * Creates a new blog record in the database.
+	 * @param blog The BlogModel object containing blog details to insert.
+	 * @return The generated blog ID if insertion is successful; otherwise, -1.
+	 */
 	public int createBlog(BlogModel blog) {
 		if (isConnectionError || dbConn == null) {
 			return -1;
@@ -62,6 +68,11 @@ public class BlogService {
 		return -1;
 	}
 
+	/**
+	 * Retrieves all blogs using a predefined query (getAllBlogsQuery).
+	 * @return List of all BlogModel objects.
+	 * @throws ClassNotFoundException
+	 */
 	public List<BlogModel> getAllBlogs() throws ClassNotFoundException {
 		List<BlogModel> blogs = new ArrayList<>();
 		String sql = getAllBlogsQuery;
@@ -92,6 +103,11 @@ public class BlogService {
 		return blogs;
 	}
 
+	/**
+	 * Retrieves all blogs joined with author info, ordered by most recently updated.
+	 * @return List of BlogModel objects with author names.
+	 * @throws ClassNotFoundException
+	 */
 	public List<BlogModel> getEveryBlogs() throws ClassNotFoundException {
 		List<BlogModel> blogs = new ArrayList<>();
 		String sql = "SELECT b.*, u.fullname AS author_name FROM blog b JOIN user u ON b.author_id = u.user_id ORDER BY updated_at DESC;";
@@ -123,6 +139,12 @@ public class BlogService {
 		return blogs;
 	}
 
+	/**
+	 * Retrieves blogs written by a specific user identified by username.
+	 * @param username The username of the author.
+	 * @return List of BlogModel objects for that user.
+	 * @throws ClassNotFoundException
+	 */
 	public List<BlogModel> getEveryBlogs(String username) throws ClassNotFoundException {
 		List<BlogModel> blogs = new ArrayList<>();
 		String sql = "SELECT b.*, u.fullname AS author_name FROM blog b JOIN user u ON b.author_id = u.user_id WHERE u.username = ? ORDER BY updated_at DESC;";
@@ -157,6 +179,10 @@ public class BlogService {
 		return blogs;
 	}
 
+	/**
+	 * Retrieves all trending blogs that are not drafts, ordered by last update.
+	 * @return List of trending BlogModel objects.
+	 */
 	public List<BlogModel> getAllTrendingBlogs() {
 		List<BlogModel> blogs = new ArrayList<>();
 		String sql = "SELECT b.*, u.fullname AS author_name FROM blog b JOIN user u ON b.author_id = u.user_id WHERE is_trending = true and is_draft = 0 ORDER BY updated_at DESC;";
@@ -187,6 +213,12 @@ public class BlogService {
 		return blogs;
 	}
 
+	/**
+	 * Retrieves a blog by its ID.
+	 * @param id Blog ID to fetch.
+	 * @return BlogModel object if found, otherwise null.
+	 * @throws ClassNotFoundException
+	 */
 	public BlogModel getBlogById(int id) throws ClassNotFoundException {
 		BlogModel blog = null;
 		String sql = "SELECT * FROM blog WHERE blog_id = ?";
@@ -218,6 +250,11 @@ public class BlogService {
 		return blog;
 	}
 
+	/**
+	 * Updates an existing blog with new data.
+	 * @param blog BlogModel object with updated data.
+	 * @return true if update successful, false otherwise.
+	 */
 	public boolean updateBlog(BlogModel blog) {
 		if (isConnectionError || dbConn == null) {
 			return false;
@@ -242,6 +279,11 @@ public class BlogService {
 		}
 	}
 
+	/**
+	 * Updates the draft status of a blog.
+	 * @param blog BlogModel object containing the draft status and blog ID.
+	 * @return true if update successful, false otherwise.
+	 */
 	public boolean updateBlogStatus(BlogModel blog) {
 		if (isConnectionError || dbConn == null) {
 			return false;
@@ -261,6 +303,11 @@ public class BlogService {
 		}
 	}
 
+	/**
+	 * Updates the trending status of a blog.
+	 * @param blog BlogModel object containing the trending status and blog ID.
+	 * @return true if update successful, false otherwise.
+	 */
 	public boolean updateBlogIsTrending(BlogModel blog) {
 		if (isConnectionError || dbConn == null) {
 			return false;
@@ -279,20 +326,55 @@ public class BlogService {
 		}
 	}
 
+	/**
+	 * Deletes a blog by its ID.
+	 * @param id Blog ID to delete.
+	 * @return true if deletion successful, false otherwise.
+	 */
 	public boolean deleteBlog(int id) {
-		String sql = "DELETE FROM blog WHERE blog_id = ?";
-		try {
-			PreparedStatement stmt = dbConn.prepareStatement(sql);
-			stmt.setInt(1, id);
-			return stmt.executeUpdate() > 0;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return false;
+	    String deleteFromBlogCategorySQL = "DELETE FROM blog_category WHERE blog_id = ?";
+	    String deleteFromBlogSQL = "DELETE FROM blog WHERE blog_id = ?";
+	    
+	    try {
+	        dbConn.setAutoCommit(false);
 
+	        try (PreparedStatement stmt1 = dbConn.prepareStatement(deleteFromBlogCategorySQL)) {
+	            stmt1.setInt(1, id);
+	            stmt1.executeUpdate();
+	        }
+
+	        try (PreparedStatement stmt2 = dbConn.prepareStatement(deleteFromBlogSQL)) {
+	            stmt2.setInt(1, id);
+	            int rowsAffected = stmt2.executeUpdate();
+
+	            dbConn.commit();
+	            return rowsAffected > 0;
+	        }
+
+	    } catch (SQLException e) {
+	        try {
+	            dbConn.rollback();
+	        } catch (SQLException rollbackEx) {
+	            rollbackEx.printStackTrace();
+	        }
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            dbConn.setAutoCommit(true);
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	    return false;
 	}
 
+	/**
+	 * Adds a category to a blog.
+	 * @param blogId The blog ID.
+	 * @param categoryId The category ID.
+	 * @throws SQLException if insertion fails.
+	 */
 	public void addCategoryToBlog(int blogId, int categoryId) throws SQLException {
 		String query = "INSERT INTO blog_category (blog_id, category_id) VALUES (?, ?)";
 
@@ -307,6 +389,11 @@ public class BlogService {
 		}
 	}
 
+	/**
+	 * Retrieves the list of categories for a given blog.
+	 * @param blogId Blog ID to fetch categories for.
+	 * @return List of CategoryModel objects linked to the blog.
+	 */
 	private List<CategoryModel> getCategoriesForBlog(int blogId) {
 		List<CategoryModel> categories = new ArrayList<>();
 		String sql = "SELECT c.category_id, c.name FROM category c "
@@ -328,6 +415,11 @@ public class BlogService {
 		return categories;
 	}
 
+	/**
+	 * Removes all categories associated with a blog.
+	 * @param blogId The blog ID.
+	 * @throws SQLException if deletion fails.
+	 */
 	public void clearCategoriesFromBlog(int blogId) throws SQLException {
 		String sql = "DELETE FROM blog_category WHERE blog_id = ?";
 		try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
@@ -336,6 +428,11 @@ public class BlogService {
 		}
 	}
 
+	/**
+	 * Finds blogs that share at least one category with the provided categories.
+	 * @param categories List of categories to match.
+	 * @return List of BlogModel objects sharing categories.
+	 */
 	public List<BlogModel> getBlogsByCategories(List<CategoryModel> categories) {
 		List<BlogModel> similarBlogs = new ArrayList<>();
 		List<BlogModel> allBlogs;
@@ -366,336 +463,383 @@ public class BlogService {
 		return similarBlogs;
 	}
 
+	/**
+	 * Adds a blog to the user's favorites.
+	 * @param favorite the FavoriteBlogModel containing userId and blogId
+	 * @return true if the insertion was successful, false otherwise
+	 */
 	public Boolean addToFavorite(FavoriteBlogModel favorite) {
-		String query = "INSERT INTO favorite_blogs (blog_id, user_id) VALUES (?, ?)";
-		System.out.println("User Id : " + favorite.getUserId());
-		try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
-			stmt.setInt(1, favorite.getBlogId());
-			stmt.setInt(2, favorite.getUserId());
+	    String query = "INSERT INTO favorite_blogs (blog_id, user_id) VALUES (?, ?)";
+	    System.out.println("User Id : " + favorite.getUserId());
+	    try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
+	        stmt.setInt(1, favorite.getBlogId());
+	        stmt.setInt(2, favorite.getUserId());
 
-			// Use executeUpdate() for INSERT operations
-			int rowsAffected = stmt.executeUpdate(); // executeUpdate returns the number of affected rows
-			return rowsAffected > 0; // Return true if the insertion was successful, false otherwise
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
+	        int rowsAffected = stmt.executeUpdate();
+	        return rowsAffected > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
 	}
 
+	/**
+	 * Retrieves the list of favorite blogs for a specific user.
+	 * @param userId the ID of the user
+	 * @return a list of BlogModel objects representing the user's favorite blogs
+	 */
 	public List<BlogModel> getFavoriteBlogsByUser(int userId) {
-		List<BlogModel> favoriteBlogs = new ArrayList<>();
+	    List<BlogModel> favoriteBlogs = new ArrayList<>();
+	    String query = "SELECT b.* FROM blog b JOIN favorite_blogs fb ON b.blog_id = fb.blog_id WHERE fb.user_id = ? ORDER BY b.updated_at DESC";
 
-		String query = "SELECT b.* FROM blog b JOIN favorite_blogs fb ON b.blog_id = fb.blog_id WHERE fb.user_id = ? ORDER BY b.updated_at DESC";
+	    try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
+	        stmt.setInt(1, userId);
 
-		try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
-			stmt.setInt(1, userId);
+	        ResultSet rs = stmt.executeQuery();
 
-			ResultSet rs = stmt.executeQuery();
+	        while (rs.next()) {
+	            BlogModel blog = new BlogModel();
+	            blog.setBlogId(rs.getInt("blog_id"));
+	            blog.setTitle(rs.getString("title"));
+	            blog.setPublishDate(rs.getDate("publish_date"));
+	            blog.setContent(rs.getString("content"));
+	            blog.setImage(rs.getString("image"));
 
-			// Iterate over the result set and map the rows to BlogModel objects
-			while (rs.next()) {
-				BlogModel blog = new BlogModel();
-				blog.setBlogId(rs.getInt("blog_id"));
-				blog.setTitle(rs.getString("title"));
-				blog.setPublishDate(rs.getDate("publish_date"));
-				blog.setContent(rs.getString("content"));
-				blog.setImage(rs.getString("image"));
+	            favoriteBlogs.add(blog);
+	        }
 
-				favoriteBlogs.add(blog);
-			}
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return favoriteBlogs; // Return the list of favorite blogs
+	    return favoriteBlogs;
 	}
 
+	/**
+	 * Retrieves the list of favorite blog IDs for a specific user.
+	 * @param userId the ID of the user
+	 * @return a list of integers representing blog IDs favorited by the user
+	 */
 	public List<Integer> getFavoriteBlogIdsByUser(int userId) {
-		List<Integer> favoriteBlogIds = new ArrayList<>();
+	    List<Integer> favoriteBlogIds = new ArrayList<>();
+	    String query = "SELECT blog_id FROM favorite_blogs WHERE user_id = ?";
 
-		// SQL query to get all blog ids for the given userId
-		String query = "SELECT blog_id FROM favorite_blogs WHERE user_id = ?";
+	    try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
+	        stmt.setInt(1, userId);
 
-		try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
-			stmt.setInt(1, userId); // Set the user ID to the query
+	        ResultSet rs = stmt.executeQuery();
 
-			ResultSet rs = stmt.executeQuery(); // Execute the query
+	        while (rs.next()) {
+	            int blogId = rs.getInt("blog_id");
+	            favoriteBlogIds.add(blogId);
+	        }
 
-			// Iterate over the result set to fetch blog IDs
-			while (rs.next()) {
-				int blogId = rs.getInt("blog_id"); // Get the blog_id
-				favoriteBlogIds.add(blogId); // Add it to the list
-			}
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return favoriteBlogIds; // Return the list of blog IDs
+	    return favoriteBlogIds;
 	}
 
+	/**
+	 * Updates the view count of a blog.
+	 * @param blog the BlogModel containing the blog ID and new views count
+	 * @return true if update was successful, false otherwise
+	 */
 	public Boolean updateBlogView(BlogModel blog) {
-		String sql = "UPDATE blog SET views = ? WHERE blog_id = ?;";
-		try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
-			stmt.setInt(1, blog.getViews());
-			stmt.setInt(2, blog.getBlogId());
+	    String sql = "UPDATE blog SET views = ? WHERE blog_id = ?;";
+	    try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
+	        stmt.setInt(1, blog.getViews());
+	        stmt.setInt(2, blog.getBlogId());
 
-			System.out.println("Blog Views: " + blog.getViews());
+	        System.out.println("Blog Views: " + blog.getViews());
 
-			int rowsAffected = stmt.executeUpdate(); // Execute the query
-			System.out.println("Rows Affected : " + rowsAffected);
+	        int rowsAffected = stmt.executeUpdate();
+	        System.out.println("Rows Affected : " + rowsAffected);
 
-			if (rowsAffected > 0) {
-				return true;
-			}
+	        return rowsAffected > 0;
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return false;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
 	}
 
+	/**
+	 * Retrieves the most viewed blogs that are not drafts, ordered by view count.
+	 * @return a list of BlogModel objects representing the most viewed blogs
+	 */
 	public List<BlogModel> getAllMostViewedBlogs() {
-		List<BlogModel> mostViewedBlogs = new ArrayList<>();
+	    List<BlogModel> mostViewedBlogs = new ArrayList<>();
 
-		// SQL query to select blogs ordered by views count and join with users to get
-		// the author's name
-		String query = "SELECT b.blog_id, b.title, b.publish_date, b.content, b.views, b.image, u.fullname AS author_name "
-				+ "FROM blog b JOIN user u ON b.author_id = u.user_id WHERE is_draft = 0 ORDER BY b.views DESC";
+	    String query = "SELECT b.blog_id, b.title, b.publish_date, b.content, b.views, b.image, u.fullname AS author_name "
+	            + "FROM blog b JOIN user u ON b.author_id = u.user_id WHERE is_draft = 0 ORDER BY b.views DESC";
 
-		try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
-			ResultSet rs = stmt.executeQuery();
+	    try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
+	        ResultSet rs = stmt.executeQuery();
 
-			// Iterate over the result set and map the rows to BlogModel objects
-			while (rs.next()) {
-				BlogModel blog = new BlogModel();
-				blog.setBlogId(rs.getInt("blog_id"));
-				blog.setTitle(rs.getString("title"));
-				blog.setPublishDate(rs.getDate("publish_date"));
-				blog.setContent(rs.getString("content"));
-				blog.setViews(rs.getInt("views"));
-				blog.setAuthorName(rs.getString("author_name")); // Set the author's name
-				blog.setImage(rs.getString("image"));
+	        while (rs.next()) {
+	            BlogModel blog = new BlogModel();
+	            blog.setBlogId(rs.getInt("blog_id"));
+	            blog.setTitle(rs.getString("title"));
+	            blog.setPublishDate(rs.getDate("publish_date"));
+	            blog.setContent(rs.getString("content"));
+	            blog.setViews(rs.getInt("views"));
+	            blog.setAuthorName(rs.getString("author_name"));
+	            blog.setImage(rs.getString("image"));
 
-				mostViewedBlogs.add(blog); // Add the blog to the list
-			}
+	            mostViewedBlogs.add(blog);
+	        }
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 
-		return mostViewedBlogs;
+	    return mostViewedBlogs;
 	}
 
+	/**
+	 * Searches blogs by matching title, content, or author name (case-insensitive).
+	 * @param query the search term
+	 * @return a list of BlogModel objects matching the search criteria
+	 */
 	public List<BlogModel> searchBlogs(String query) {
-		List<BlogModel> blogs = new ArrayList<>();
+	    List<BlogModel> blogs = new ArrayList<>();
 
-		// SQL query to search for blogs by title, content, or author's name
-		// (case-insensitive search)
-		String sql = "SELECT b.blog_id, b.title, b.publish_date, b.content, b.image, u.fullname AS author_name "
-				+ "FROM blog b " + "JOIN user u ON b.author_id = u.user_id "
-				+ "WHERE LOWER(b.title) LIKE ? OR LOWER(b.content) LIKE ? OR LOWER(u.fullname) LIKE ?";
+	    String sql = "SELECT b.blog_id, b.title, b.publish_date, b.content, b.image, u.fullname AS author_name "
+	            + "FROM blog b JOIN user u ON b.author_id = u.user_id "
+	            + "WHERE LOWER(b.title) LIKE ? OR LOWER(b.content) LIKE ? OR LOWER(u.fullname) LIKE ?";
 
-		try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
-			String searchTerm = "%" + query.toLowerCase() + "%";
-			stmt.setString(1, searchTerm); // Search in the title
-			stmt.setString(2, searchTerm); // Search in the content
-			stmt.setString(3, searchTerm); // Search in the author's name
+	    try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
+	        String searchTerm = "%" + query.toLowerCase() + "%";
+	        stmt.setString(1, searchTerm);
+	        stmt.setString(2, searchTerm);
+	        stmt.setString(3, searchTerm);
 
-			ResultSet rs = stmt.executeQuery();
+	        ResultSet rs = stmt.executeQuery();
 
-			// Map the result set to BlogModel objects
-			while (rs.next()) {
-				BlogModel blog = new BlogModel();
-				blog.setBlogId(rs.getInt("blog_id"));
-				blog.setTitle(rs.getString("title"));
-				blog.setPublishDate(rs.getDate("publish_date"));
-				blog.setContent(rs.getString("content"));
-				blog.setAuthorName(rs.getString("author_name"));
-				blog.setImage(rs.getString("image"));
+	        while (rs.next()) {
+	            BlogModel blog = new BlogModel();
+	            blog.setBlogId(rs.getInt("blog_id"));
+	            blog.setTitle(rs.getString("title"));
+	            blog.setPublishDate(rs.getDate("publish_date"));
+	            blog.setContent(rs.getString("content"));
+	            blog.setAuthorName(rs.getString("author_name"));
+	            blog.setImage(rs.getString("image"));
 
-				blogs.add(blog); // Add the blog to the list
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	            blogs.add(blog);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 
-		return blogs; // Return the list of blogs
+	    return blogs;
 	}
 
+	/**
+	 * Checks if a blog is marked as favorite by a specific user.
+	 * @param userId the user ID
+	 * @param blogId the blog ID
+	 * @return true if the blog is favorited by the user, false otherwise
+	 */
 	public Boolean isBlogFavorite(int userId, int blogId) {
-		String query = "SELECT COUNT(*) FROM favorite_blogs WHERE user_id = ? AND blog_id = ?";
-		try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
-			stmt.setInt(1, userId);
-			stmt.setInt(2, blogId);
+	    String query = "SELECT COUNT(*) FROM favorite_blogs WHERE user_id = ? AND blog_id = ?";
+	    try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
+	        stmt.setInt(1, userId);
+	        stmt.setInt(2, blogId);
 
-			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) {
-				return rs.getInt(1) > 0;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return false;
+	        ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	            return rs.getInt(1) > 0;
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false;
 	}
 
+	/**
+	 * Removes a blog from a user's favorites.
+	 * @param userId the user ID
+	 * @param blogId the blog ID
+	 * @return true if the deletion was successful, false otherwise
+	 */
 	public boolean removeFromFavorite(int userId, int blogId) {
-		String query = "DELETE FROM favorite_blogs WHERE user_id = ? AND blog_id = ?";
-		try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
-			stmt.setInt(1, userId);
-			stmt.setInt(2, blogId);
-			return stmt.executeUpdate() > 0;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return false;
+	    String query = "DELETE FROM favorite_blogs WHERE user_id = ? AND blog_id = ?";
+	    try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
+	        stmt.setInt(1, userId);
+	        stmt.setInt(2, blogId);
+	        return stmt.executeUpdate() > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false;
 	}
 
+	/**
+	 * Gets the count of published blogs in the current week.
+	 * @return the count of published blogs this week
+	 */
 	public int getPublishedBlogsCountThisWeek() {
-		String sql = "SELECT COUNT(*) FROM blog WHERE is_draft = 0 AND WEEK(publish_date, 1) = WEEK(CURDATE(), 1) AND YEAR(publish_date) = YEAR(CURDATE())";
+	    String sql = "SELECT COUNT(*) FROM blog WHERE is_draft = 0 AND WEEK(publish_date, 1) = WEEK(CURDATE(), 1) AND YEAR(publish_date) = YEAR(CURDATE())";
 
-		try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
-			ResultSet rs = stmt.executeQuery();
+	    try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
+	        ResultSet rs = stmt.executeQuery();
 
-			if (rs.next()) {
-				return rs.getInt(1); // Return the count of blogs
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 
-		return 0; // Return 0 if there is an error or no blogs found
+	    return 0;
 	}
 
+	/**
+	 * Gets the count of published blogs by a specific author in the current week.
+	 * @param authorId the author ID
+	 * @return the count of published blogs by the author this week
+	 */
 	public int getPublishedBlogsCountByAuthorThisWeek(int authorId) {
-		String sql = "SELECT COUNT(*) FROM blog WHERE is_draft = 0 AND author_id = ? "
-				+ "AND WEEK(publish_date, 1) = WEEK(CURDATE(), 1) " + "AND YEAR(publish_date) = YEAR(CURDATE())";
+	    String sql = "SELECT COUNT(*) FROM blog WHERE is_draft = 0 AND author_id = ? "
+	            + "AND WEEK(publish_date, 1) = WEEK(CURDATE(), 1) "
+	            + "AND YEAR(publish_date) = YEAR(CURDATE())";
 
-		try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
-			stmt.setInt(1, authorId);
+	    try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
+	        stmt.setInt(1, authorId);
 
-			ResultSet rs = stmt.executeQuery();
+	        ResultSet rs = stmt.executeQuery();
 
-			if (rs.next()) {
-				return rs.getInt(1);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 
-		return 0;
+	    return 0;
 	}
 
+	/**
+	 * Gets the total count of published blogs (not drafts).
+	 * @return the count of all published blogs
+	 */
 	public int getPublishedBlogsCount() {
-		String sql = "SELECT COUNT(*) FROM blog WHERE is_draft = 0;"; // Filter by current week
+	    String sql = "SELECT COUNT(*) FROM blog WHERE is_draft = 0;";
 
-		try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
+	    try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
+	        ResultSet rs = stmt.executeQuery();
 
-			ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 
-			if (rs.next()) {
-				return rs.getInt(1); // Return the count of blogs for the given author for the current week
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return 0; // Return 0 if there is an error or no published blogs for this author in the
-					// current week
+	    return 0;
 	}
 
+	/**
+	 * Gets the count of draft blogs for a specific author.
+	 * @param userId the author/user ID
+	 * @return the count of draft blogs
+	 */
 	public int getDraftBlogCountByAuthor(int userId) {
-		int draftCount = 0;
+	    int draftCount = 0;
+	    String query = "SELECT COUNT(*) FROM blog WHERE is_draft = true AND author_id = ?";
 
-		// Query to count the number of draft blogs for the given user_id
-		String query = "SELECT COUNT(*) FROM blog WHERE is_draft = true AND author_id = ?";
+	    try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
+	        stmt.setInt(1, userId);
+	        ResultSet rs = stmt.executeQuery();
 
-		try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
-			stmt.setInt(1, userId); // Set the user_id parameter in the query
-			ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	            draftCount = rs.getInt(1);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 
-			if (rs.next()) {
-				draftCount = rs.getInt(1); // Get the count of draft blogs from the result set
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return draftCount; // Return the count of draft blogs
+	    return draftCount;
 	}
 
+	/**
+	 * Retrieves the most recent blogs filtered by draft status.
+	 * @param limit the maximum number of blogs to return
+	 * @param is_draft the draft status filter (true for drafts, false for published)
+	 * @return a list of BlogModel objects representing the most recent blogs
+	 */
 	public List<BlogModel> getMostRecentBlogs(int limit, Boolean is_draft) {
-		List<BlogModel> recentBlogs = new ArrayList<>();
+	    List<BlogModel> recentBlogs = new ArrayList<>();
 
-		// Query to select blogs ordered by the publish date in descending order
-		// You can also use `updated_at` instead of `publish_date` depending on your use
-		// case
-		String query = "SELECT b.blog_id, b.title, b.publish_date, b.content, b.image, u.fullname AS author_name "
-				+ "FROM blog b " + "JOIN user u ON b.author_id = u.user_id " + "WHERE is_draft = ? "
-				+ "ORDER BY b.publish_date DESC " + "LIMIT ?";
+	    String query = "SELECT b.blog_id, b.title, b.publish_date, b.content, b.image, u.fullname AS author_name "
+	            + "FROM blog b JOIN user u ON b.author_id = u.user_id WHERE is_draft = ? "
+	            + "ORDER BY b.publish_date DESC LIMIT ?";
 
-		try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
-			stmt.setBoolean(1, is_draft);
-			stmt.setInt(2, limit); // Set the limit parameter to get the most recent blogs
+	    try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
+	        stmt.setBoolean(1, is_draft);
+	        stmt.setInt(2, limit);
 
-			ResultSet rs = stmt.executeQuery();
+	        ResultSet rs = stmt.executeQuery();
 
-			// Iterate over the result set and map the rows to BlogModel objects
-			while (rs.next()) {
-				BlogModel blog = new BlogModel();
-				blog.setBlogId(rs.getInt("blog_id"));
-				blog.setTitle(rs.getString("title"));
-				blog.setPublishDate(rs.getDate("publish_date"));
-				blog.setContent(rs.getString("content"));
-				blog.setAuthorName(rs.getString("author_name"));
-				blog.setImage(rs.getString("image"));
+	        while (rs.next()) {
+	            BlogModel blog = new BlogModel();
+	            blog.setBlogId(rs.getInt("blog_id"));
+	            blog.setTitle(rs.getString("title"));
+	            blog.setPublishDate(rs.getDate("publish_date"));
+	            blog.setContent(rs.getString("content"));
+	            blog.setAuthorName(rs.getString("author_name"));
+	            blog.setImage(rs.getString("image"));
 
-				recentBlogs.add(blog); // Add the blog to the list
-			}
+	            recentBlogs.add(blog);
+	        }
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 
-		return recentBlogs; // Return the list of most recent blogs
+	    return recentBlogs;
 	}
 
+	/**
+	 * Retrieves the most recent blogs by a specific author filtered by draft status.
+	 * @param authorId the author ID
+	 * @param limit the maximum number of blogs to return
+	 * @param is_draft the draft status filter (true for drafts, false for published)
+	 * @return a list of BlogModel objects representing the author's most recent blogs
+	 */
 	public List<BlogModel> getMostRecentBlogsByAuthor(int authorId, int limit, Boolean is_draft) {
-		List<BlogModel> recentBlogs = new ArrayList<>();
+	    List<BlogModel> recentBlogs = new ArrayList<>();
 
-		// Query to select blogs ordered by the publish date in descending order,
-		// filtered by author_id
-		String query = "SELECT b.blog_id, b.title, b.publish_date, b.content, b.image, u.fullname AS author_name "
-				+ "FROM blog b " + "JOIN user u ON b.author_id = u.user_id " + "WHERE b.author_id = ? AND is_draft = ? "
-				+ // Add space after the condition
-				"ORDER BY b.publish_date DESC " + "LIMIT ?";
+	    String query = "SELECT b.blog_id, b.title, b.publish_date, b.content, b.image, u.fullname AS author_name "
+	            + "FROM blog b JOIN user u ON b.author_id = u.user_id WHERE b.author_id = ? AND is_draft = ? "
+	            + "ORDER BY b.publish_date DESC LIMIT ?";
 
-		try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
-			stmt.setInt(1, authorId); // Set the author_id parameter to filter by author
-			stmt.setBoolean(2, is_draft); // Set the limit parameter to restrict the number of results
-			stmt.setInt(3, limit);
-			ResultSet rs = stmt.executeQuery();
+	    try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
+	        stmt.setInt(1, authorId);
+	        stmt.setBoolean(2, is_draft);
+	        stmt.setInt(3, limit);
 
-			// Iterate over the result set and map the rows to BlogModel objects
-			while (rs.next()) {
-				BlogModel blog = new BlogModel();
-				blog.setBlogId(rs.getInt("blog_id"));
-				blog.setTitle(rs.getString("title"));
-				blog.setPublishDate(rs.getDate("publish_date"));
-				blog.setContent(rs.getString("content"));
-				blog.setAuthorName(rs.getString("author_name"));
-				blog.setImage(rs.getString("image"));
+	        ResultSet rs = stmt.executeQuery();
 
-				recentBlogs.add(blog); // Add the blog to the list
-			}
+	        while (rs.next()) {
+	            BlogModel blog = new BlogModel();
+	            blog.setBlogId(rs.getInt("blog_id"));
+	            blog.setTitle(rs.getString("title"));
+	            blog.setPublishDate(rs.getDate("publish_date"));
+	            blog.setContent(rs.getString("content"));
+	            blog.setAuthorName(rs.getString("author_name"));
+	            blog.setImage(rs.getString("image"));
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	            recentBlogs.add(blog);
+	        }
 
-		return recentBlogs; // Return the list of most recent blogs filtered by author_id
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return recentBlogs;
 	}
 
 }

@@ -1,5 +1,9 @@
 package com.wordweave.models;
 
+/**
+ * Represents a user role in the system.
+ * Each role typically defines a set of permissions or access rights.
+ */
 public class RoleModel {
     private int role_id;
     private String name;
@@ -16,6 +20,4 @@ public class RoleModel {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-
 }

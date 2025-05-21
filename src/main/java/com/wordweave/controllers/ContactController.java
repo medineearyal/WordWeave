@@ -19,7 +19,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class ContactController
+ * Controller that handles rendering the contact form and processing contact submissions.
+ * Mapped to /contact URL. Allows users to message authors listed in the system.
  */
 @WebServlet(asyncSupported = true, urlPatterns = { "/contact" })
 public class ContactController extends HttpServlet {
@@ -35,8 +36,14 @@ public class ContactController extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+    /**
+	 * Handles GET requests to display the contact form.
+	 * Loads all users with the role "user" (authors) and forwards to contact.jsp.
+	 *
+	 * @param request  HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @throws ServletException
+	 * @throws IOException
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -52,7 +59,14 @@ public class ContactController extends HttpServlet {
 
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * Handles POST requests from the contact form submission.
+	 * Validates input, creates a contact message, and saves it to the database.
+	 * On error, redisplays the form with error messages.
+	 *
+	 * @param request  HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @throws ServletException
+	 * @throws IOException
 	 */
 	@Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -82,6 +96,13 @@ public class ContactController extends HttpServlet {
         doGet(request, response);
     }
 
+	 /**
+     * Validates the contact form inputs.
+     * Returns a map of field-specific error messages.
+     *
+     * @param request HttpServletRequest
+     * @return Map of errors
+     */
     private Map<String, String> validateContactForm(HttpServletRequest request) {
         Map<String, String> errors = new HashMap<>();
 
@@ -111,6 +132,16 @@ public class ContactController extends HttpServlet {
         return errors;
     }
 
+    /**
+     * Handles form re-display in case of validation failure.
+     * Re-populates form fields and forwards back to the contact page.
+     *
+     * @param request  HttpServletRequest
+     * @param response HttpServletResponse
+     * @param errors   Map of validation error messages
+     * @throws ServletException
+     * @throws IOException
+     */
     private void handleContactFailure(HttpServletRequest request, HttpServletResponse response, Map<String, String> errors)
             throws ServletException, IOException {
 

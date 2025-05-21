@@ -4,6 +4,10 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
+/**
+ * Represents a blog post in the system.
+ * Encapsulates blog details including content, author info, categories, and status.
+ */
 public class BlogModel {
 	private int blogId;
 	private String image;
@@ -64,6 +68,18 @@ public class BlogModel {
 	public BlogModel() {
 	}
 
+	/**
+	 * Full constructor with all main blog attributes except categories and author details.
+	 * Used when loading a complete blog entity from DB.
+	 * 
+	 * @param blogId Unique ID of the blog
+	 * @param image Image URL/path
+	 * @param content Blog content/body
+	 * @param title Blog title
+	 * @param updatedAt Timestamp of last update
+	 * @param authorId Author's user ID
+	 * @param publishDate Date when blog was published
+	*/
 	public BlogModel(int blogId, String image, String content, String title, Timestamp updatedAt, int authorId,
 			Date publishDate) {
 		this.blogId = blogId;
@@ -75,6 +91,16 @@ public class BlogModel {
 		this.publishDate = publishDate;
 	}
 
+	/**
+	 * Constructor without blogId and updatedAt.
+	 * Useful when creating a new blog post before saving to DB (ID and updatedAt assigned later).
+	 * 
+	 * @param image Image URL/path
+	 * @param content Blog content
+	 * @param title Blog title
+	 * @param authorId Author's user ID
+	 * @param publishDate Date of publishing
+	*/
 	public BlogModel(String image, String content, String title, int authorId, Date publishDate) {
 		this.image = image;
 		this.content = content;

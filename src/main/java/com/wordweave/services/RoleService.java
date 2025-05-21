@@ -14,6 +14,10 @@ public class RoleService {
 
 	private Connection dbConn;
 
+	/**
+     * Constructor initializes the database connection.
+     * Catches and prints exceptions if connection fails.
+     */
 	public RoleService() {
 		try {
 			dbConn = DbConfig.getDbConnection();
@@ -47,6 +51,12 @@ public class RoleService {
 		return roleList;
 	}
 
+	/**
+     * Retrieves a role by its name.
+     *
+     * @param name The name of the role to fetch.
+     * @return RoleModel if found, otherwise null.
+     */
 	public RoleModel getRole(String name) {
 		RoleModel role = null;
 		String sql = "SELECT role_id, name FROM roles WHERE name = ?";
@@ -68,17 +78,22 @@ public class RoleService {
 		return role;
 	}
 
+	/**
+     * Retrieves the role associated with a specific user ID.
+     *
+     * @param userId The ID of the user whose role is fetched.
+     * @return RoleModel of the user's role, or null if not found.
+     */
 	public RoleModel getUserRole(int userId) {
 		RoleModel role = null;
 		String sql = "SELECT r.role_id, r.name FROM roles r " + "JOIN user u ON r.role_id = u.role_id "
 				+ "WHERE u.user_id = ?";
 
 		try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
-			stmt.setInt(1, userId); // Set the userId parameter
+			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
 
 			if (rs.next()) {
-				// Create and populate RoleModel object
 				role = new RoleModel();
 				role.setRole_id(rs.getInt("role_id"));
 				role.setName(rs.getString("name"));
@@ -87,6 +102,6 @@ public class RoleService {
 			e.printStackTrace();
 		}
 
-		return role; // Return the role or null if no role found
+		return role;
 	}
 }

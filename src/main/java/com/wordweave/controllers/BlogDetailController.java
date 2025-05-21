@@ -17,7 +17,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class BlogDetailController
+ * Controller that handles blog detail view requests.
+ * Maps to /blog/{id}, retrieves a specific blog post, updates its view count,
+ * fetches the author’s details, and retrieves similar blogs based on categories.
  */
 @WebServlet(asyncSupported = true, urlPatterns = { "/blog", "/blog/*"})
 public class BlogDetailController extends HttpServlet {

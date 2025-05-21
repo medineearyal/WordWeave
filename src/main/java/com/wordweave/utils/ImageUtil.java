@@ -11,8 +11,20 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
 
+/**
+ * Utility class for handling image upload operations in web applications.
+ * Provides methods to process file uploads from HTTP requests and save them to the server.
+ */
 public class ImageUtil {
-
+	/**
+     * Uploads an image file from a multipart HTTP request to the server's image directory.
+     * 
+     * @param req The HttpServletRequest containing the file upload
+     * @param field The name of the form field containing the file
+     * @return true if the upload was successful, false if no file was provided
+     * @throws IOException If an I/O error occurs during file operations
+     * @throws ServletException If the request is not a multipart request or other servlet error occurs
+     */
 	public boolean uploadImage(HttpServletRequest req, String field) throws IOException, ServletException {
 		Part image = req.getPart(field);
 		if (image == null || image.getSize() == 0) {
@@ -22,23 +34,19 @@ public class ImageUtil {
 
 	    String uploadPath = req.getServletContext().getRealPath("/images");
 
-	    // Create the folder if it doesn't exist
 	    File uploadDir = new File(uploadPath);
 	    if (!uploadDir.exists()) {
 	        uploadDir.mkdirs();
 	    }
 
-	    // Get original file name
 	    String fileName = Paths.get(image.getSubmittedFileName()).getFileName().toString();
 
-	    // Create file on disk
 	    File file = new File(uploadDir, fileName);
 
 	    try (InputStream input = image.getInputStream()) {
 	        Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
 	    }
 
-	    System.out.println("File saved to: " + file.getAbsolutePath());
 	    return true;
 	}
 

@@ -15,6 +15,10 @@ public class UserService {
 	private Connection dbConn;
 	private boolean isConnectionError = false;
 
+	 /**
+     * Initializes database connection on service creation.
+     * Sets connection error flag if connection fails.
+    */
 	public UserService() {
 		try {
 			dbConn = DbConfig.getDbConnection();
@@ -52,6 +56,12 @@ public class UserService {
 		return false;
 	}
 
+	/**
+     * Registers a new user into the database.
+     *
+     * @param userModel UserModel containing all user details.
+     * @return true if registration succeeds, false if it fails, null if no DB connection.
+     */
 	public Boolean registerUser(UserModel userModel) {
 		if (dbConn == null) {
 			System.err.println("Database connection is not available.");
@@ -79,8 +89,7 @@ public class UserService {
 	/**
 	 * Validates the password retrieved from the database.
 	 *
-	 * @param result       the ResultSet containing the username and password from
-	 *                     the database
+	 * @param result the ResultSet containing the username and password from the database
 	 * @param userModel the UserModel object containing user credentials
 	 * @return true if the passwords match, false otherwise
 	 * @throws SQLException if a database access error occurs
@@ -95,6 +104,12 @@ public class UserService {
 				&& PasswordUtil.decrypt(dbPassword, dbUsername).equals(userModel.getPassword());
 	}
 
+	/**
+     * Retrieves all users from the database.
+     *
+     * @return List of all UserModel objects.
+     * @throws ClassNotFoundException if DB driver not found.
+     */
 	public List<UserModel> getAllUsers() throws ClassNotFoundException {
 		List<UserModel> userList = new ArrayList<>();
 
@@ -123,6 +138,13 @@ public class UserService {
 		return userList;
 	}
 	
+	/**
+     * Retrieves all users filtered by role name.
+     *
+     * @param role the role name to filter users by.
+     * @return List of UserModel objects matching the role.
+     * @throws ClassNotFoundException if DB driver not found.
+     */
 	public List<UserModel> getAllUsers(String role) throws ClassNotFoundException {
 	    List<UserModel> userList = new ArrayList<>();
 
@@ -132,13 +154,11 @@ public class UserService {
 	    try (Connection conn = DbConfig.getDbConnection();
 	         PreparedStatement roleStmt = conn.prepareStatement(roleQuery)) {
 
-	        // Step 1: Get the role_id from role name
 	        roleStmt.setString(1, role);
 	        try (ResultSet roleRs = roleStmt.executeQuery()) {
 	            if (roleRs.next()) {
 	                int roleId = roleRs.getInt("role_id");
 
-	                // Step 2: Use role_id to filter users
 	                try (PreparedStatement userStmt = conn.prepareStatement(userQuery)) {
 	                    userStmt.setInt(1, roleId);
 	                    try (ResultSet rs = userStmt.executeQuery()) {
@@ -168,6 +188,13 @@ public class UserService {
 	    return userList;
 	}
 
+	/**
+     * Retrieves a user by their user ID.
+     *
+     * @param id The user_id to look up.
+     * @return UserModel object or null if not found.
+     * @throws ClassNotFoundException if DB driver not found.
+     */
 	public UserModel getUserById(int id) throws ClassNotFoundException {
 		UserModel user = null;
 
@@ -197,6 +224,13 @@ public class UserService {
 		return user;
 	}
 
+	/**
+     * Deletes a user by their user ID.
+     *
+     * @param id The user_id of the user to delete.
+     * @return true if deletion was successful, false otherwise.
+     * @throws ClassNotFoundException if DB driver not found.
+     */
 	public Boolean deleteUser(int id) throws ClassNotFoundException {
 		String sql = "DELETE FROM user WHERE user_id = ?";
 		boolean rowDeleted = false;
@@ -215,6 +249,13 @@ public class UserService {
 		return rowDeleted;
 	}
 
+	/**
+     * Updates an existing user's details.
+     *
+     * @param updatedUser UserModel containing updated fields.
+     * @return true if update succeeded, false otherwise.
+     * @throws ClassNotFoundException if DB driver not found.
+     */
 	public boolean updateUser(UserModel updatedUser) throws ClassNotFoundException {
 	    String sql = "UPDATE user SET fullname = ?, email = ?, username = ?, role_id = ?, password = ?, profile_picture = ? WHERE user_id = ?";
 	    boolean updated = false;
@@ -238,6 +279,12 @@ public class UserService {
 	    return updated;
 	}
 	
+	/**
+     * Retrieves a user by username.
+     *
+     * @param username The username to look up.
+     * @return UserModel if found, else null.
+     */
 	public UserModel getUserByUsername(String username) {
 		String sql = "SELECT * FROM user WHERE username = ?";
 		
@@ -265,6 +312,12 @@ public class UserService {
 	    }
 	}
 	
+	/**
+     * Retrieves the most recent users up to a specified limit.
+     *
+     * @param limit maximum number of users to return.
+     * @return List of most recent UserModel objects.
+     */
 	public List<UserModel> getMostRecentUsers(int limit) {
 	    List<UserModel> recentUsers = new ArrayList<>();
 	    
@@ -291,24 +344,29 @@ public class UserService {
 	        e.printStackTrace();
 	    }
 	    
-	    return recentUsers;  // Return the list of most recent users
+	    return recentUsers;
 	}
 	
+	/**
+     * Counts the number of users with a specific role and approval status.
+     *
+     * @param roleName   The role name to filter by.
+     * @param isApproved The approval status to filter by.
+     * @return Count of approved users with the specified role.
+     */
 	public int getApprovedUsersCountByRole(String roleName, Boolean isApproved) {
 	    int approvedUsersCount = 0;
 
-	    // SQL query to count users with the specified role and are approved
 	    String query = "SELECT COUNT(*) FROM user u " +
 	                   "JOIN roles r ON u.role_id = r.role_id " +
-	                   "WHERE r.name = ? AND u.is_approved = ?";  // Filter by role_name and is_approved
-
+	                   "WHERE r.name = ? AND u.is_approved = ?";
 	    try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
-	        stmt.setString(1, roleName);  // Set the role_name parameter in the query
+	        stmt.setString(1, roleName);
 	        stmt.setBoolean(2, isApproved);
 	        ResultSet rs = stmt.executeQuery();
 	        
 	        if (rs.next()) {
-	            approvedUsersCount = rs.getInt(1);  // Get the count of approved users with the given role
+	            approvedUsersCount = rs.getInt(1);
 	        }
 
 	    } catch (SQLException e) {

@@ -14,7 +14,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class SearchController
+ * SearchController handles blog search requests.
+ * It retrieves blog posts matching the search query or
+ * all blogs if no query is provided, then forwards results to the JSP.
  */
 @WebServlet(asyncSupported = true, urlPatterns = { "/search" })
 public class SearchController extends HttpServlet {

@@ -21,6 +21,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Servlet to handle User Management in admin panel.
+ * Supports listing users, creating, editing, and deleting users.
+ * Handles user form data, validations, and file uploads (profile pictures).
+ */
 @MultipartConfig
 @WebServlet(asyncSupported = true, urlPatterns = { "/admin/users" })
 public class UserManagementController extends HttpServlet {
@@ -36,6 +41,13 @@ public class UserManagementController extends HttpServlet {
 		this.roles = roleService.getAllRoles();
 	}
 
+	/**
+	 * Handles GET requests for:
+	 *  - Listing all users (default)
+	 *  - Displaying the form for editing an existing user
+	 *  - Deleting a user
+	 *  - Showing the form for creating a new user
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -94,6 +106,11 @@ public class UserManagementController extends HttpServlet {
 		}
 	}
 
+	/**
+	 * Handles POST requests for:
+	 *  - Creating a new user
+	 *  - Editing an existing user
+	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -159,7 +176,13 @@ public class UserManagementController extends HttpServlet {
 					userModel.setPassword(existingUser.getPassword());
 				}
 				
-
+				String fromLocation = request.getParameter("from") != null ? request.getParameter("from") : "";
+				if (fromLocation.equals("accounts")) {
+					String userRole = (String) request.getAttribute("role");
+					RoleModel roleObject = roleService.getRole(userRole);
+					request.setAttribute("roleObject", roleObject);
+				}
+				
 				if (!errors.isEmpty()) {
 					for (Map.Entry<String, String> entry : errors.entrySet()) {
 						request.setAttribute(entry.getKey(), entry.getValue());
@@ -168,13 +191,10 @@ public class UserManagementController extends HttpServlet {
 					request.setAttribute("roles", this.roles);
 					request.setAttribute("actionText", "Edit");
 					
-					String fromLocation = request.getParameter("from") != null ? request.getParameter("from") : "";
 					if (fromLocation.equals("accounts")) {
 						request.setAttribute("actionText", "Update");
-						String userRole = (String) request.getAttribute("role");
-						RoleModel roleObject = roleService.getRole(userRole);
-						request.setAttribute("roleObject", roleObject);
 					}
+					
 					request.getRequestDispatcher("/WEB-INF/pages/admin/userForm.jsp").forward(request, response);
 					return;
 				}
@@ -190,6 +210,11 @@ public class UserManagementController extends HttpServlet {
 				}
 				request.setAttribute("editUser", userModel);
 				request.setAttribute("actionText", "Edit");
+				
+				if (fromLocation.equals("accounts")) {
+					request.setAttribute("actionText", "Update");
+				}
+				
 				request.setAttribute("roles", this.roles);
 				request.getRequestDispatcher("/WEB-INF/pages/admin/userForm.jsp").forward(request, response);
 				return;
@@ -203,6 +228,13 @@ public class UserManagementController extends HttpServlet {
 		}
 	}
 
+	/**
+	 * Extracts form parameters from request and maps them into a UserModel object.
+	 * Also handles file upload for profile picture and retains existing picture if no new upload.
+	 * 
+	 * @param req HttpServletRequest containing form data and files
+	 * @return Populated UserModel instance
+	 */
 	private UserModel extractUserModel(HttpServletRequest req) {
 		String fullname = "";
 		String email = "";
@@ -243,6 +275,14 @@ public class UserManagementController extends HttpServlet {
 	}
 
 
+	/**
+	 * Validates the UserModel data depending on the context.
+	 * Checks for required fields, email format, password strength, and role validity.
+	 * 
+	 * @param user UserModel instance to validate
+	 * @param isCreate true if validating for new user creation (password mandatory)
+	 * @return HashMap of field names to error messages; empty if no errors
+	 */
 	private HashMap<String, String> validateUser(UserModel userModel, boolean isCreate) {
 		HashMap<String, String> errors = new HashMap<>();
 

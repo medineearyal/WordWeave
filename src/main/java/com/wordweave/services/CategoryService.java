@@ -14,6 +14,11 @@ public class CategoryService {
 
     private Connection connection;
 
+    /**
+     * Constructor to initialize the database connection.
+     * Attempts to get a connection from DbConfig.
+     * Prints stack trace if connection fails.
+     */
     public CategoryService() {
         try {
 			this.connection = DbConfig.getDbConnection();
@@ -26,6 +31,11 @@ public class CategoryService {
 		}
     }
 
+    /**
+     * Inserts a new category into the database.
+     *
+     * @param category The CategoryModel object containing the category name.
+     */
     public void createCategory(CategoryModel category) {
         String query = "INSERT INTO category (name) VALUES (?)";
 
@@ -37,6 +47,11 @@ public class CategoryService {
         }
     }
 
+    /**
+     * Retrieves all categories from the database.
+     *
+     * @return List of CategoryModel objects representing all categories.
+     */
     public List<CategoryModel> getAllCategories() {
         List<CategoryModel> categories = new ArrayList<>();
         String query = "SELECT * FROM category";
@@ -57,6 +72,12 @@ public class CategoryService {
         return categories;
     }
 
+    /**
+     * Retrieves a category by its ID.
+     *
+     * @param id The ID of the category to retrieve.
+     * @return CategoryModel object if found, otherwise null.
+     */
     public CategoryModel getCategoryById(int id) {
         String query = "SELECT * FROM category WHERE category_id = ?";
         CategoryModel category = null;
@@ -77,6 +98,11 @@ public class CategoryService {
         return category;
     }
 
+    /**
+     * Updates an existing category in the database.
+     *
+     * @param category The CategoryModel object containing the updated data.
+     */
     public void updateCategory(CategoryModel category) {
         String query = "UPDATE category SET name = ? WHERE category_id = ?";
 
@@ -89,6 +115,11 @@ public class CategoryService {
         }
     }
 
+    /**
+     * Deletes a category from the database by its ID.
+     *
+     * @param id The ID of the category to delete.
+     */
     public void deleteCategory(int id) {
         String query = "DELETE FROM category WHERE category_id = ?";
 

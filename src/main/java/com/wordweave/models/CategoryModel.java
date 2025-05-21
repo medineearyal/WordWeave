@@ -1,5 +1,9 @@
 package com.wordweave.models;
 
+/**
+ * Represents a category to which a blog post can belong.
+ * Categories help classify and organize blogs (e.g., Technology, Health, Travel).
+ */
 public class CategoryModel {
 	private int category_id;
 	private String name;

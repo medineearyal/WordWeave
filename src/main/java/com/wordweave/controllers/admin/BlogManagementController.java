@@ -8,10 +8,10 @@ import java.util.List;
 
 import com.wordweave.models.BlogModel;
 import com.wordweave.models.CategoryModel;
+import com.wordweave.models.FavoriteBlogModel;
 import com.wordweave.models.UserModel;
 import com.wordweave.services.BlogService;
 import com.wordweave.services.CategoryService;
-import com.wordweave.services.FavoriteBlogModel;
 import com.wordweave.services.UserService;
 import com.wordweave.utils.ImageUtil;
 
@@ -23,15 +23,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class BlogAdminController
+ * Servlet for managing blogs in the admin panel.
+ * Supports viewing, creating, editing, deleting blogs,
+ * toggling trending/draft/favorite status, and more.
  */
 @MultipartConfig
 @WebServlet(asyncSupported = true, urlPatterns = { "/admin/blogs" })
 public class BlogManagementController extends HttpServlet {
-	/**
-	 *
-	 */
-
 	private static final long serialVersionUID = 1L;
 	private BlogService blogService = new BlogService();
 	private UserService userService = new UserService();
@@ -178,7 +176,6 @@ public class BlogManagementController extends HttpServlet {
 		        
 		        boolean isFavorite = blogService.isBlogFavorite(user.getUser_id(), blogId);
 		        
-		        System.out.println(isFavorite);
 
 		        if (isFavorite) {
 		            boolean isRemoved = blogService.removeFromFavorite(user.getUser_id(), blogId);

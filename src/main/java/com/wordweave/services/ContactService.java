@@ -16,8 +16,10 @@ import com.wordweave.models.ContactModel;
 public class ContactService {
 	private Connection connection;
 	private boolean isConnectionError = false;
-	private String getAllBlogsQuery = "SELECT b.*, u.fullname AS author_name FROM blog b JOIN user u ON b.author_id = u.user_id WHERE is_draft = 0;";
-
+	/**
+     * Constructor initializes the database connection.
+     * If connection fails, sets isConnectionError to true and prints the stack trace.
+     */
 	public ContactService() {
 		try {
 			connection = DbConfig.getDbConnection();
@@ -27,7 +29,12 @@ public class ContactService {
 		}
 	}
 
-	
+	 /**
+     * Creates a new contact message record in the database.
+     *
+     * @param contact ContactModel containing the details to insert.
+     * @return true if insert was successful, false otherwise.
+     */
 	public boolean createContact(ContactModel contact) {
 	    String query = "INSERT INTO contact_message (author_id, sender_email, message_text, sender_name, message_date) VALUES (?, ?, ?, ?, ?)";
 	    try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -43,7 +50,11 @@ public class ContactService {
 	    }
 	}
 
-	// Retrieve all contacts
+	/**
+     * Retrieves all contact messages from the database.
+     *
+     * @return List of ContactModel objects representing all contacts.
+    */
 	public List<ContactModel> getAllContacts() {
 	    List<ContactModel> contacts = new ArrayList<>();
 	    String query = "SELECT * FROM contact_message";
@@ -65,7 +76,12 @@ public class ContactService {
 	    return contacts;
 	}
 
-	// Retrieve a contact by its ID
+	/**
+     * Retrieves a single contact message by its ID.
+     *
+     * @param id The message_id of the contact message to retrieve.
+     * @return ContactModel object if found, otherwise null.
+     */
 	public ContactModel getContactById(int id) {
 	    ContactModel contact = null;
 	    String query = "SELECT * FROM contact_message WHERE message_id = ?";
@@ -88,6 +104,13 @@ public class ContactService {
 	    return contact;
 	}
 	
+	/**
+     * Retrieves all contact messages for a specific author by username.
+     *
+     * @param author The username of the author to filter by.
+     * @return List of ContactModel objects for the given author.
+     * @throws SQLException if a database access error occurs.
+     */
 	public List<ContactModel> getAllContactsForAuthor(String author) throws SQLException {
         String author_id_query = "SELECT user_id FROM user WHERE username = ?";
         String query = "SELECT * FROM contact_message WHERE author_id = ?";
@@ -124,7 +147,12 @@ public class ContactService {
         return contacts;
     }
 
-	// Update a contact
+	/**
+     * Updates an existing contact message in the database.
+     *
+     * @param contact ContactModel containing updated details (must include message_id).
+     * @return true if update was successful, false otherwise.
+     */
 	public boolean updateContact(ContactModel contact) {
 	    String query = "UPDATE contact_message SET sender_email = ?, message_text = ?, sender_name = ?, message_date = ? WHERE message_id = ?";
 	    try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -140,7 +168,12 @@ public class ContactService {
 	    }
 	}
 
-	// Delete a contact
+	/**
+     * Deletes a contact message from the database by its ID.
+     *
+     * @param id The message_id of the contact message to delete.
+     * @return true if deletion was successful, false otherwise.
+     */
 	public boolean deleteContact(int id) {
 	    String query = "DELETE FROM contact_message WHERE message_id = ?";
 	    try (PreparedStatement stmt = connection.prepareStatement(query)) {

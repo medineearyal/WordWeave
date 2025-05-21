@@ -19,34 +19,55 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * Utility class for secure password encryption and decryption using AES-GCM.
+ * Provides methods for generating cryptographic keys, encrypting passwords,
+ * and decrypting them using username as part of the key derivation.
+ */
 public class PasswordUtil {
 	private static final String ENCRYPT_ALGO = "AES/GCM/NoPadding";
 
-    private static final int TAG_LENGTH_BIT = 128; // must be one of {128, 120, 112, 104, 96}
+    private static final int TAG_LENGTH_BIT = 128;
     private static final int IV_LENGTH_BYTE = 12;
     private static final int SALT_LENGTH_BYTE = 16;
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
 
+    /**
+     * Generates a secure random nonce (number used once) of specified length.
+     * 
+     * @param numBytes The length of the nonce in bytes
+     * @return A byte array containing random bytes
+     */
     public static byte[] getRandomNonce(int numBytes) {
         byte[] nonce = new byte[numBytes];
         new SecureRandom().nextBytes(nonce);
         return nonce;
     }
 
-    // AES secret key
+    /**
+     * Generates a new AES secret key of specified size.
+     * 
+     * @param keysize The key size in bits (128, 192, or 256)
+     * @return A new SecretKey for AES encryption
+     * @throws NoSuchAlgorithmException If AES algorithm is not available
+     */
     public static SecretKey getAESKey(int keysize) throws NoSuchAlgorithmException {
         KeyGenerator keyGen = KeyGenerator.getInstance("AES");
         keyGen.init(keysize, SecureRandom.getInstanceStrong());
         return keyGen.generateKey();
     }
 
-    // Password derived AES 256 bits secret key
+    /**
+     * Derives an AES key from a password using PBKDF2 with HMAC-SHA256.
+     * 
+     * @param password The password to derive the key from
+     * @param salt The random salt for key derivation
+     * @return Derived SecretKey or null if derivation fails
+     */
     public static SecretKey getAESKeyFromPassword(char[] password, byte[] salt){
            	try {
            		SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-           		// iterationCount = 65536
-           		// keyLength = 256
            		KeySpec spec = new PBEKeySpec(password, salt, 65536, 256);
            		SecretKey secret = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
            		return secret;
@@ -58,33 +79,29 @@ public class PasswordUtil {
        		return null;
     }
 
-    // return a base64 encoded AES encrypted text
+    /**
+     * Encrypts a password using AES-GCM with username-derived key.
+     * 
+     * @param username Used as part of key derivation (treated as password in PBKDF2)
+     * @param password The plaintext password to encrypt
+     * @return Base64-encoded string containing IV + salt + ciphertext, or null if encryption fails
+     */
     public static String encrypt(String username, String password){
     	try {
-		    // 16 bytes salt
 		    byte[] salt = getRandomNonce(SALT_LENGTH_BYTE);
-
-		    // GCM recommended 12 bytes iv?
 		    byte[] iv = getRandomNonce(IV_LENGTH_BYTE);
-
-		    // secret key from password
 		    SecretKey aesKeyFromPassword = getAESKeyFromPassword(username.toCharArray(), salt);
 
 		    Cipher cipher = Cipher.getInstance(ENCRYPT_ALGO);
-
-		    // ASE-GCM needs GCMParameterSpec
 		    cipher.init(Cipher.ENCRYPT_MODE, aesKeyFromPassword, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
 
 		    byte[] cipherText = cipher.doFinal(password.getBytes());
-
-		    // prefix IV and Salt to cipher text
 		    byte[] cipherTextWithIvSalt = ByteBuffer.allocate(iv.length + salt.length + cipherText.length)
 		            .put(iv)
 		            .put(salt)
 		            .put(cipherText)
 		            .array();
 
-		    // string representation, base64, send this string to other for decryption.
 		    return Base64.getEncoder().encodeToString(cipherTextWithIvSalt);
     	}catch(Exception ex) {
     		ex.printStackTrace();
@@ -94,11 +111,16 @@ public class PasswordUtil {
     }
 
 
+    /**
+     * Decrypts a password encrypted by the encrypt() method.
+     * 
+     * @param encryptedPassword The Base64-encoded encrypted password (IV + salt + ciphertext)
+     * @param username The username used during encryption for key derivation
+     * @return The decrypted plaintext password, or null if decryption fails
+     */
     public static String decrypt(String encryptedPassword, String username) {
 		try {
 			byte[] decode = Base64.getDecoder().decode(encryptedPassword.getBytes(UTF_8));
-
-			// get back the iv and salt from the cipher text
 			ByteBuffer bb = ByteBuffer.wrap(decode);
 
 			byte[] iv = new byte[IV_LENGTH_BYTE];
@@ -110,7 +132,6 @@ public class PasswordUtil {
 			byte[] cipherText = new byte[bb.remaining()];
 			bb.get(cipherText);
 
-			// get back the aes key from the same password and salt
 			SecretKey aesKeyFromPassword = PasswordUtil.getAESKeyFromPassword(username.toCharArray(), salt);
 
 			Cipher cipher = Cipher.getInstance(ENCRYPT_ALGO);

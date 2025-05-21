@@ -12,6 +12,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Servlet for managing categories in the admin panel.
+ * Supports listing, creating, editing, and deleting categories.
+ */
 @WebServlet(asyncSupported = true, urlPatterns = { "/admin/categories" })
 public class CategoryManagementController extends HttpServlet {
     private static final long serialVersionUID = 1L;

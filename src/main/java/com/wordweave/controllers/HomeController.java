@@ -16,7 +16,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class HomeController
+ * HomeController handles requests to the root path ("/").
+ * It retrieves blog data for display on the homepage including all blogs, trending blogs, most viewed blogs,
+ * and if a user is logged in, their favorite blog IDs.
  */
 @WebServlet(asyncSupported = true, urlPatterns = { "/" })
 public class HomeController extends HttpServlet {
@@ -33,8 +35,14 @@ public class HomeController extends HttpServlet {
     }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
+	 * Handles GET requests to the homepage ("/").
+	 * Fetches blog-related data and sets it as request attributes for rendering on the homepage.
+	 *
+	 * @param request  HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @throws ServletException
+	 * @throws IOException
+	*/
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub

@@ -16,7 +16,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class DashboardController
+ * Servlet for displaying the admin/user dashboard.
+ * Shows statistics and recent data depending on the logged-in user's role.
  */
 @WebServlet(asyncSupported = true, urlPatterns = { "/admin/dashboard" })
 public class DashboardController extends HttpServlet {
@@ -32,9 +33,10 @@ public class DashboardController extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
+    /**
+     * Handles GET requests to load dashboard data.
+     * Checks user authentication and role, then loads role-specific stats and recent items.
+     */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub

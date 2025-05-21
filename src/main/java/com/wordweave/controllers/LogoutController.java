@@ -11,7 +11,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 /**
- * Servlet implementation class LogoutController
+ * LogoutController handles user logout functionality.
+ * It invalidates the user session and clears relevant cookies, then redirects to the login page.
  */
 @WebServlet(asyncSupported = true, urlPatterns = { "/logout" })
 public class LogoutController extends HttpServlet {

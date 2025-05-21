@@ -21,7 +21,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 /**
- * Servlet Filter implementation class AuthFilter
+ * Servlet Filter implementation for authentication and authorization.
+ * This filter intercepts *all* incoming requests ("/*") to:
+ *   - Allow access to public paths and static resources without login
+ *   - Check if user is logged in before accessing protected resources
+ *   - Set page title dynamically based on the requested path
+ *   - Set user attributes in the request for use in JSPs
  */
 @WebFilter("/*")
 public class AuthFilter extends HttpFilter implements Filter {
@@ -50,7 +55,8 @@ public class AuthFilter extends HttpFilter implements Filter {
 	}
 
 	/**
-	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
+	 * Core filter method called on every request matching "/*".
+	 * Controls authentication, sets page titles, and manages access control.
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
@@ -114,12 +120,19 @@ public class AuthFilter extends HttpFilter implements Filter {
 
 		boolean isPublic = isPublicPath(path) || isStaticResource(path);
 		if (isLoggedIn || isPublic) {
-			chain.doFilter(request, response); // proceed to servlet or JSP
+			chain.doFilter(request, response);
 		} else {
 			res.sendRedirect(req.getContextPath() + "/login");
 		}
 	}
 
+	/**
+	 * Checks if the requested path starts with any of the public paths.
+	 * Public paths do not require authentication.
+	 * 
+	 * @param path The URI path to check
+	 * @return true if path is public, false otherwise
+	 */
 	private boolean isPublicPath(String path) {
 		for (String pub : PUBLIC_PATHS) {
 			if (path.startsWith(pub)) {
@@ -129,6 +142,13 @@ public class AuthFilter extends HttpFilter implements Filter {
 		return false;
 	}
 
+	/**
+	 * Checks if the requested path starts with any static resource paths.
+	 * Static resources like CSS/JS/images do not require authentication.
+	 * 
+	 * @param path The URI path to check
+	 * @return true if path is for static resource, false otherwise
+	 */
 	private boolean isStaticResource(String path) {
 		for (String staticPath : STATIC_RESOURCES) {
 			if (path.startsWith(staticPath)) {

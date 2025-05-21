@@ -1,7 +1,4 @@
-package com.wordweave.services;
-
-import com.wordweave.models.BlogModel;
-import com.wordweave.models.UserModel;
+package com.wordweave.models;
 
 public class FavoriteBlogModel {
 	private int userId;
@@ -40,7 +37,4 @@ public class FavoriteBlogModel {
 	public void setBlog(BlogModel blog) {
 		this.blog = blog;
 	}
-	
-	
-
 }

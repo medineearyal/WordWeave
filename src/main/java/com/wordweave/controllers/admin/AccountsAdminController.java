@@ -15,9 +15,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+
 /**
- * Servlet implementation class AccountsAdminController
+ * AccountsAdminController handles requests for viewing and editing user accounts in the admin panel.
+ * It ensures only authenticated users with roles can access the account editing page.
  */
+
 @WebServlet(asyncSupported = true, urlPatterns = { "/admin/accounts" })
 public class AccountsAdminController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -33,9 +36,16 @@ public class AccountsAdminController extends HttpServlet {
         this.roles = roleSerivce.getAllRoles();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
+    /**
+     * Handles GET requests to load the user account edit form.
+     * It checks for user authentication and role presence in request attributes,
+     * fetches user and role details, then forwards to the user form JSP.
+     * 
+     * @param request  HttpServletRequest
+     * @param response HttpServletResponse
+     * @throws ServletException
+     * @throws IOException
+     */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
